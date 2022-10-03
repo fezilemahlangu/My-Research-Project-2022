@@ -4,7 +4,9 @@ Honours Research Project
 Title: Surrogate Tasks for Architecture Selection in Reinforcement Learning
 Investigating the correlation between supervised learning and deep reinforcement learning networks regarding the performance of the agent. 
 
-Phase 1 needs data from Atari HEAD :
+## Phase 1 
+
+needs data from Atari HEAD :
 
 @dataset{ruohan_zhang_2019_3451402,
 
@@ -35,6 +37,7 @@ Phase 1 needs data from Atari HEAD :
   
 }
 
+## sh files 
 SL.sh runs SL_python.py -> sbatch SL.sh
 
 DeepRL.sh runs DeepRL.py -> sbatch DeepRL.sh
