@@ -3,7 +3,7 @@ import numpy as np
 import random 
 from dqn.network import Net
 
-device = torch.device("cpu")
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 class DQN_Agent:
     def __init__(self, img_size, num_classes, memory):
         self.img_size = img_size

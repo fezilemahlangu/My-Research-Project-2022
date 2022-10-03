@@ -7,7 +7,8 @@ import torch.nn.functional as F
 import csv 
 
 
-device = torch.device("cpu")
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 class Net(nn.Module):
   def __init__(self, numChannels, classes):
     
