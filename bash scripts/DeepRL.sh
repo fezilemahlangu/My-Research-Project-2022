@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#SBATCH -p batch 
-#SBATCH -N 2
+#SBATCH -p batch
+#SBATCH -N 1
 #SBATCH -J deepRL_run 
 #SBATCH -o my_output_file2.out
 #SBATCH -e my_error_file2.err
