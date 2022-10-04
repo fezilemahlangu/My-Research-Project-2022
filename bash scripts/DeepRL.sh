@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH -p batch 
-#SBATCH -N 1
+#SBATCH -N 2
 #SBATCH -J deepRL_run 
 #SBATCH -o my_output_file2.out
 #SBATCH -e my_error_file2.err
@@ -14,7 +14,7 @@ echo "Job started on" `date`
 source ~/.bashrc ##source conda 
 
 # conda create -n my-env
-# conda activate my_env
+conda activate my_env
 
 conda config --env --add channels conda-forge 
 
