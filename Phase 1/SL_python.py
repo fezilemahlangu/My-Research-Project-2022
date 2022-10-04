@@ -46,7 +46,7 @@ def save_results(fieldnames,total_time,call_back_time,test_acc,test_loss):
         }
     ]
 
-    with open('/home-mscluster/fmahlangu/2089676/atari_breakout_data/results_breakout_layer1.csv', 'a', encoding='UTF8') as f:
+    with open('/home-mscluster/fmahlangu/2089676/atari_breakout_data/results_breakout_layer2.csv', 'a', encoding='UTF8') as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writerows(rows)
 
@@ -70,7 +70,7 @@ def save_model(fieldnames,first_layer,second_layer):
         }
     ]
 
-    with open('/home-mscluster/fmahlangu/2089676/atari_breakout_data/models_breakout_layer1.csv', 'a', encoding='UTF8') as f:
+    with open('/home-mscluster/fmahlangu/2089676/atari_breakout_data/models_breakout_layer2.csv', 'a', encoding='UTF8') as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writerows(rows)
 
@@ -268,13 +268,13 @@ def main():
     #-----------------------------------------------------------------#
     #prepare csv for results 
     fieldnames_results = ['total_time', 'call_back_time','test_acc','test_loss'] 
-    with open('/home-mscluster/fmahlangu/2089676/atari_breakout_data/results_breakout_layer1.csv', 'w', encoding='UTF8', newline='') as f:
+    with open('/home-mscluster/fmahlangu/2089676/atari_breakout_data/results_breakout_layer2.csv', 'w', encoding='UTF8', newline='') as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames_results)
         writer.writeheader()
 
     #prepare csv for results 
     fieldnames_m = ['first_layer','second_layer'] 
-    with open('/home-mscluster/fmahlangu/2089676/atari_breakout_data/models_breakout_layer1.csv', 'w', encoding='UTF8', newline='') as f:
+    with open('/home-mscluster/fmahlangu/2089676/atari_breakout_data/models_breakout_layer2.csv', 'w', encoding='UTF8', newline='') as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames_m)
         writer.writeheader()
 
