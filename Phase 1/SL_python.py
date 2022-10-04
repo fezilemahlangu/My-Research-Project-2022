@@ -212,7 +212,6 @@ def run_model_config(train_x,train_y,val_x,val_y,test_x,test_y,img_shape,num_cla
     model.add(Conv2D(filters=first_layer[0],kernel_size=first_layer[1],strides=first_layer[2], padding=first_layer[3],activation=first_layer[4],input_shape=img_shape))
     model.add(MaxPooling2D(pool_size=first_layer[5]))
     model.add(Dropout(rate=first_layer[6]))
-
     if(len(sec_layer)>1):
         model.add(Conv2D(filters=sec_layer[0],kernel_size=sec_layer[1],strides=sec_layer[2],padding=sec_layer[3],activation=sec_layer[4]))
         model.add(MaxPooling2D(pool_size=sec_layer[5]))
@@ -440,22 +439,15 @@ def main():
     Kernels = [1,3,5,7]
     Strides = [1,2]
     Padding = ["same","valid"]
-    Activations = ["relu","sigmoid","tanh"]
+    Activations = ["relu"]
     Pool = [2,3]
-    Dropout_rate =[0.05,0.1,0.15,0.25]
-    Last_Dense = [16,32,64,128,256]
-    Learning_rate = [1e-2,1e-1,3e-4]
+    Dropout_rate =[0.15,0.25]
+    # Last_Dense = [16,32,64,128,256]
+    # Learning_rate = [1e-2,1e-1,3e-4]
 
-    # Filters = [16]
-    # Kernels = [1]
-    # Strides = [1]
-    # Padding = ["same"]
-    # Activations = ["relu"]
-    # Pool = [2]
-    # Dropout_rate =[0.05]
-    # Last_Dense = [16]
-    # Learning_rate = [1e-2]
+    # first_layer = [32,3,1,"same","relu",2,0.05,256,1e-4]
 
+    first_layer = [32,3,1,"same","relu",2,0.05,256,0.05,1e-4]
 
     #run models 
 
@@ -466,10 +458,10 @@ def main():
                     for act in Activations:
                         for pool in Pool:
                             for dropoutrate in Dropout_rate:
-                                for dense in Last_Dense:
-                                    for last_dropoutrate in Dropout_rate:
-                                        for learn_rate in Learning_rate:
-                                            run_model_config(alltrainX,alltrainY,allvalX,allvalY,alltestX,alltestY,img_shape,num_classes,[fil,ker,stri,pad,act,pool,dropoutrate,dense,last_dropoutrate,learn_rate],[],fieldnames_results,fieldnames_m)
+                                # for dense in Last_Dense:
+                                    # for last_dropoutrate in Dropout_rate:
+                                        # for learn_rate in Learning_rate:
+                                            run_model_config(alltrainX,alltrainY,allvalX,allvalY,alltestX,alltestY,img_shape,num_classes,first_layer,[fil,ker,stri,pad,act,pool,dropoutrate],fieldnames_results,fieldnames_m)
 
 
 
