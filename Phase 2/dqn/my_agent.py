@@ -83,7 +83,7 @@ class DQN_Agent:
         # img = torch.tensor([img], dtype=torch.float)
         # img = img.to(device)
         
-        img = torch.from_numpy(img).float().to(device)
+        img = torch.from_numpy(img).float().unsqueeze(0).to(device) #unsqueeze so it's 4D with batch size dimension
 
         act_values = self.model.forward(img)
         # return np.argmax(act_values[0])
