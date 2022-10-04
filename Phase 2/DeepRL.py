@@ -2,16 +2,35 @@ import torch
 import numpy as np
 import random 
 import gym 
+import csv 
 
 from dqn.wrappers import *
 from dqn.memory_replay  import Memory
 from dqn.my_agent import DQN_Agent
+
+def save_reward(fieldnames,rewards):
+  rows=[
+      {
+          'rewards' : rewards
+      }
+  ]
+
+
+  with open('/home-mscluster/fmahlangu/2089676/atari_breakout_data/results_phase2.csv', 'a', encoding='UTF8') as f:
+      writer = csv.DictWriter(f, fieldnames=fieldnames)
+      writer.writerows(rows)
 
 def main():
   #seed
   torch.manual_seed(42)
   np.random.seed(42)
   random.seed(42)
+
+  #prepare csv 
+  fieldnames_results = ['rewards'] 
+  with open('/home-mscluster/fmahlangu/2089676/atari_breakout_data/results_phase2.csv', 'w', encoding='UTF8', newline='') as f:
+      writer = csv.DictWriter(f, fieldnames=fieldnames_results)
+      writer.writeheader()
 
   #arguments 
   args = {
@@ -52,6 +71,8 @@ def main():
 
   episode_rewards = [0.0]
   loss = [0.0]
+  cummu_rewards = []
+  # episodes = []
   eps_timesteps = agent.epsilon_decay * float(args["n_episodes"])
 
   for e in range(args["n_episodes"]):
@@ -89,9 +110,13 @@ def main():
     
       if done:
         print(f"steps: {e}")
+        # episodes.append(e)
         print(f"epsiodes: {len(episode_rewards)}")
-        print(f"cumulative episode reward: {round(np.sum(episode_rewards),1)}")
+        sum_ep_reward = round(np.sum(episode_rewards),1)
+        cummu_rewards.append(sum_ep_reward)
+        print(f"cumulative episode reward: {sum_ep_reward}")
         print("------------------------------------")
+  save_reward(fieldnames_results,cummu_rewards)
 
 if __name__ == '__main__':
   main()
