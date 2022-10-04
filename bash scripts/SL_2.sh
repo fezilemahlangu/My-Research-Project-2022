@@ -29,7 +29,7 @@ conda config --env --add channels conda-forge
 # conda install -c conda-forge zipfile-deflate64
 
 ## Execute the python script
-python SL_python.py
+python SL_python_2.py
 
 echo "---------------------------"
 echo "Job ended on" `date`
