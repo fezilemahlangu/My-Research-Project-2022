@@ -2,9 +2,9 @@
 
 #SBATCH -p batch 
 #SBATCH -N 1
-#SBATCH -J job_run 
-#SBATCH -o my_output_file.out
-#SBATCH -e my_error_file.err
+#SBATCH -J job_run_2 
+#SBATCH -o my_output_file3.out
+#SBATCH -e my_error_file3.err
 
 
 echo "---------------------------"

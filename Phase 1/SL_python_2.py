@@ -438,13 +438,24 @@ def main():
     #hyper-paramters:
     Filters = [32,64,128,256]
     Kernels = [1,3,5]
-    Strides = [2]
+    Strides = [1,2]
     Padding = ["same"]
     Activations = ["relu"]
     Pool = [2]
     Dropout_rate =[0.05]
-    Last_Dense = [64,128,256]
+    Last_Dense = [128,256]
     Learning_rate = [1e-4]
+
+    # Filters = [16]
+    # Kernels = [1]
+    # Strides = [1]
+    # Padding = ["same"]
+    # Activations = ["relu"]
+    # Pool = [2]
+    # Dropout_rate =[0.05]
+    # Last_Dense = [16]
+    # Learning_rate = [1e-2]
+
 
     #run models 
 
