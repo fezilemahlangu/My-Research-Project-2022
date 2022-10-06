@@ -353,6 +353,28 @@ def main():
     valY1 = np.array(valY1)
     testY1 = np.array(testY1)
 
+    # #-------------------------------------------------------trial = 134 -------------------------------------------------------
+    trial= 134
+    zipname,df= get_data(trial)
+   
+    #get images with associated actions for each trial 
+    n=dataframe[dataframe.trial_id==trial].total_frame.tolist() #get number of frame/images
+    n=n[0]
+
+    df,deleted_rows=clean_df(df)
+    images=create_train_x(zipname,n,deleted_rows)
+    actions=create_train_y(df)
+
+    trainX2, valX2, trainY2, valY2 = train_test_split(images, actions, test_size=0.18)
+    trainX2, testX2, trainY2, testY2 = train_test_split(trainX2, trainY2, test_size=0.12)
+
+    trainX2 = np.array(trainX2)
+    valX2 = np.array(valX2)
+    testX2 = np.array(testX2)
+    trainY2 = np.array(trainY2)
+    valY2 = np.array(valY2)
+    testY2 = np.array(testY2)
+
 
     alltrainX = []
 
@@ -362,8 +384,10 @@ def main():
     for i in range(trainX1.shape[0]):
       alltrainX.append(trainX1[i])
 
+    for i in range(trainX2.shape[0]):
+      alltrainX.append(trainX2[i])
+
     alltrainX = np.array(alltrainX)
-    print(alltrainX.shape)
 
     alltrainY = []
 
@@ -372,6 +396,9 @@ def main():
 
     for i in range(trainY1.shape[0]):
       alltrainY.append(trainY1[i])
+    
+    for i in range(trainY2.shape[0]):
+      alltrainY.append(trainY2[i])
 
     alltrainY = np.array(alltrainY)
 
@@ -383,6 +410,9 @@ def main():
     for i in range(testX1.shape[0]):
       alltestX.append(testX1[i])
 
+    for i in range(testX2.shape[0]):
+      alltestX.append(testX2[i])
+
     alltestX = np.array(alltestX)
 
     alltestY = []
@@ -392,6 +422,9 @@ def main():
 
     for i in range(testY1.shape[0]):
       alltestY.append(testY1[i])
+    
+    for i in range(testY2.shape[0]):
+      alltestY.append(testY2[i])
 
     alltestY = np.array(alltestY)
 
@@ -403,6 +436,9 @@ def main():
     for i in range(valX1.shape[0]):
       allvalX.append(valX1[i])
 
+    for i in range(valX2.shape[0]):
+      allvalX.append(valX2[i])
+
     allvalX = np.array(allvalX)
 
     allvalY = []
@@ -412,6 +448,9 @@ def main():
 
     for i in range(valY1.shape[0]):
       allvalY.append(valY1[i])
+
+    for i in range(valY2.shape[0]):
+      allvalY.append(valY2[i])
 
     allvalY = np.array(allvalY)
 
