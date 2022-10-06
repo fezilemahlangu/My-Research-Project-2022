@@ -48,12 +48,12 @@ def save_results(fieldnames,total_time,call_back_time,test_acc,test_loss):
         }
     ]
 
-    with open('/home-mscluster/fmahlangu/2089676/atari_breakout_data/results_breakout_layer2.csv', 'a', encoding='UTF8') as f:
+    with open('/home-mscluster/fmahlangu/2089676/atari_breakout_data/results', 'a', encoding='UTF8') as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writerows(rows)
 
 
-def save_model(fieldnames,first_layer,second_layer):
+def save_model(fieldnames,first_layer,second_layer,third_layer):
     '''
     saves training model hyperparameters to a csv file 
 
@@ -61,6 +61,7 @@ def save_model(fieldnames,first_layer,second_layer):
         fieldnames: field names of the csv file 
         first_layer: hyperparameters of the first layer
         second_layer: hyperparameters of the second layer 
+        third_layer: hyperparameters of the third layer
     @returns: 
         *nothing* 
 
@@ -68,11 +69,13 @@ def save_model(fieldnames,first_layer,second_layer):
     rows=[
         {
             'first_layer' : first_layer,
-            'second_layer' : second_layer
+            'second_layer' : second_layer,
+            'third_layer' : third_layer
+
         }
     ]
 
-    with open('/home-mscluster/fmahlangu/2089676/atari_breakout_data/models_breakout_layer2.csv', 'a', encoding='UTF8') as f:
+    with open('/home-mscluster/fmahlangu/2089676/atari_breakout_data/models', 'a', encoding='UTF8') as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writerows(rows)
 
@@ -189,7 +192,7 @@ def create_train_y(df):
     array = df.to_records(index=False)
     return array['action']
 
-def run_model_config(train_x,train_y,val_x,val_y,test_x,test_y,img_shape,num_classes,first_layer, sec_layer,fieldnames_results, fieldnames_model):
+def run_model_config(train_x,train_y,val_x,val_y,test_x,test_y,img_shape,num_classes,first_layer, sec_layer,third_layer,fieldnames_results, fieldnames_model):
     '''
     This function takes in the hyperparameters of the model, builds and runs it.
     It also saves the model hyperparameters and results from training and test scores 
@@ -220,6 +223,11 @@ def run_model_config(train_x,train_y,val_x,val_y,test_x,test_y,img_shape,num_cla
         model.add(Conv2D(filters=sec_layer[0],kernel_size=sec_layer[1],strides=sec_layer[2],padding=sec_layer[3],activation=sec_layer[4]))
         model.add(MaxPooling2D(pool_size=sec_layer[5]))
         model.add(Dropout(rate=sec_layer[6]))
+    
+    if(len(third_layer)>1):
+        model.add(Conv2D(filters=sec_layer[0],kernel_size=sec_layer[1],strides=sec_layer[2],padding=sec_layer[3],activation=sec_layer[4]))
+        model.add(MaxPooling2D(pool_size=sec_layer[5]))
+        model.add(Dropout(rate=sec_layer[6]))
 
     model.add(Flatten())
     model.add(Dense(units=first_layer[7], activation = 'relu'))
@@ -237,11 +245,11 @@ def run_model_config(train_x,train_y,val_x,val_y,test_x,test_y,img_shape,num_cla
     #run model 
     time_callback = timing_Callback() 
     start = time.time()
-    Atari_Conf_History =  model.fit(train_x, train_y, epochs = 20, validation_data=(val_x, val_y), callbacks=[time_callback,early_stopping])
+    Atari_Conf_History =  model.fit(train_x, train_y, epochs = 25, validation_data=(val_x, val_y), callbacks=[time_callback,early_stopping])
     total_time = time.time()-start 
 
     #save model hyperparameters to csv
-    save_model(fieldnames_model,first_layer,sec_layer)
+    save_model(fieldnames_model,first_layer,sec_layer,third_layer)
 
     #save results to csv
     # history = Atari_Conf_History.history 
@@ -272,13 +280,13 @@ def main():
     #-----------------------------------------------------------------#
     #prepare csv for results 
     fieldnames_results = ['total_time', 'call_back_time','test_acc','test_loss'] 
-    with open('/home-mscluster/fmahlangu/2089676/atari_breakout_data/results_breakout_layer2.csv', 'w', encoding='UTF8', newline='') as f:
+    with open('/home-mscluster/fmahlangu/2089676/atari_breakout_data/results', 'w', encoding='UTF8', newline='') as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames_results)
         writer.writeheader()
 
     #prepare csv for results 
-    fieldnames_m = ['first_layer','second_layer'] 
-    with open('/home-mscluster/fmahlangu/2089676/atari_breakout_data/models_breakout_layer2.csv', 'w', encoding='UTF8', newline='') as f:
+    fieldnames_m = ['first_layer','second_layer','third_layer'] 
+    with open('/home-mscluster/fmahlangu/2089676/atari_breakout_data/models', 'w', encoding='UTF8', newline='') as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames_m)
         writer.writeheader()
 
@@ -480,29 +488,39 @@ def main():
     params.append([[32, 5, 2, 'same', 'relu', 2, 0.05, 512, 0.05, 0.0001],[64, 3, 2, 'same', 'relu', 3, 0.25],[64, 3, 1, 'same', 'relu', 3, 0.25]])
     params.append([[16, 8, 4, 'same', 'relu', 1, 0.05, 256, 0.05, 0.0001],[32, 4, 2, 'same', 'relu', 1, 0.25],[64, 3, 1, 'same', 'relu', 1, 0.25]]) #minh
     params.append([[32, 8, 4, 'same', 'relu', 1, 0.05, 256, 0.05, 0.0001],[64, 4, 2, 'same', 'relu', 1, 0.25],[128, 3, 1, 'same', 'relu', 1, 0.25]])
-    params.append([[],[],[]])
-    params.append([[],[],[]])
-    params.append([[],[],[]])
-    params.append([[],[],[]])
-    params.append([[],[],[]])
-    params.append([[],[],[]])
-    params.append([[],[],[]])
-    params.append([[],[],[]])
+    # params.append([[],[],[]])
+    # params.append([[],[],[]])
+    # params.append([[],[],[]])
+    # params.append([[],[],[]])
+    # params.append([[],[],[]])
+    # params.append([[],[],[]])
+    # params.append([[],[],[]])
+    # params.append([[],[],[]])
+
+    for p in params:
+      first = p[0]
+      second = p[1]
+      third = p[2]
+
+      run_model_config(alltrainX,alltrainY,allvalX,allvalY,alltestX,alltestY,img_shape,num_classes,first,second,third,fieldnames_results,fieldnames_m)
+      
+
+
 
 
     #run models 
 
-    for fil in Filters:
-        for ker in Kernels:
-            for stri in Strides:
-                for pad in Padding:
-                    for act in Activations:
-                        for pool in Pool:
-                            for dropoutrate in Dropout_rate:
-                                # for dense in Last_Dense:
-                                    # for last_dropoutrate in Dropout_rate:
-                                        # for learn_rate in Learning_rate:
-                                            run_model_config(alltrainX,alltrainY,allvalX,allvalY,alltestX,alltestY,img_shape,num_classes,first_layer,[fil,ker,stri,pad,act,pool,dropoutrate],fieldnames_results,fieldnames_m)
+    # for fil in Filters:
+    #     for ker in Kernels:
+    #         for stri in Strides:
+    #             for pad in Padding:
+    #                 for act in Activations:
+    #                     for pool in Pool:
+    #                         for dropoutrate in Dropout_rate:
+    #                             # for dense in Last_Dense:
+    #                                 # for last_dropoutrate in Dropout_rate:
+    #                                     # for learn_rate in Learning_rate:
+    #                                         run_model_config(alltrainX,alltrainY,allvalX,allvalY,alltestX,alltestY,img_shape,num_classes,first_layer,[fil,ker,stri,pad,act,pool,dropoutrate],fieldnames_results,fieldnames_m)
 
 
 
