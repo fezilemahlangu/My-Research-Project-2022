@@ -36,7 +36,7 @@ def main():
   args = {
       "env_name" : "Breakout-v4", #name of environment used
       "learning_starts" :10000, 
-      "learning_freq" : 1, 
+      "learning_freq" : 5, 
       "update_target_freq" : 1000, 
       "memory_size" : 50000, 
       "n_episodes" : int(1e6) #number of steps the environment will run 
