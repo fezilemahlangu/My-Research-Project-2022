@@ -1,3 +1,4 @@
+from ast import arg
 import torch 
 import numpy as np
 import random 
@@ -39,6 +40,7 @@ def main():
       "learning_freq" : 5, 
       "update_target_freq" : 1000, 
       "memory_size" : 50000, 
+      "print_freq" : 10,
       "n_episodes" : int(1e6) #number of steps the environment will run 
   }
 
@@ -58,8 +60,8 @@ def main():
   #-------------------------------------#
 
   img_size = env.observation_space
-  print(img_size.shape)
-  # img_size = env.observation_space.shape
+  # print(img_size.shape)
+
   num_classes = env.action_space.n
 
   memory = Memory(args['memory_size'],img_size)
@@ -68,27 +70,19 @@ def main():
   state = env.reset()
 
 
-
   episode_rewards = [0.0]
   loss = [0.0]
-  cummu_rewards = []
+  mean_rewards = []
   # episodes = []
   eps_timesteps = agent.epsilon_decay * float(args["n_episodes"])
 
   for e in range(args["n_episodes"]):
-      # state = env.reset()
-      # state = np.reshape(state, img_size)
-      # state = np.reshape(state, (-1,)+img_size)
 
       fraction = min(1.0, float(e) / eps_timesteps)
     
       action = agent.act(state, fraction)
-      # print(action)
 
       next_state, reward, done, _ = env.step(action) 
-      # print(reward)
-      # next_state = np.reshape(next_state, (-1,)+img_size)
-      
 
       agent.remember(state,action,reward,next_state,float(done))
       state = next_state
@@ -108,15 +102,14 @@ def main():
           agent.update_target()
           
     
-      if done:
+      if (done and len(episode_rewards) % args["print_freq"] == 0):
         print(f"steps: {e}")
-        # episodes.append(e)
         print(f"epsiodes: {len(episode_rewards)}")
-        sum_ep_reward = round(np.sum(episode_rewards),1)
-        cummu_rewards.append(sum_ep_reward)
-        print(f"cumulative episode reward: {sum_ep_reward}")
+        mean_100ep_reward = round(np.mean(episode_rewards[-101:-1]), 1)
+        print("mean 100 episode reward: {}".format(mean_100ep_reward))
+        mean_rewards.append(mean_100ep_reward)
         print("------------------------------------")
-  save_reward(fieldnames_results,cummu_rewards)
+  save_reward(fieldnames_results,mean_rewards)
 
 if __name__ == '__main__':
   main()
