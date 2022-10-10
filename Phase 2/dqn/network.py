@@ -12,7 +12,7 @@ from torch import flatten
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class Net(nn.Module):
-  def __init__(self, numChannels, classes):
+  def __init__(self, numChannels, classes,first,second,third):
     
     super(Net, self).__init__()
     self.numChannels = numChannels

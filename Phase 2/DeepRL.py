@@ -64,52 +64,68 @@ def main():
 
   num_classes = env.action_space.n
 
-  memory = Memory(args['memory_size'],img_size)
-  agent = DQN_Agent(img_size, num_classes, memory)
+  
+  #-------------hyperparams-------------#
+  params = []
+  params.append([[16, 1, 1, 'same', 'relu', 2, 0.05, 32, 0.05, 0.01],[],[]])
+  params.append([[16, 1, 1, 'same', 'relu', 2, 0.05, 64, 0.1, 0.01],[],[]])
+  params.append([[32, 3, 1, 'same', 'relu', 2, 0.05, 256, 0.05, 0.0001],[64, 3, 1, 'same', 'relu', 3, 0.25],[]])
+  params.append([[32, 3, 1, 'same', 'relu', 2, 0.05, 256, 0.05, 0.0001],[32, 3, 1, 'same', 'relu', 3, 0.25],[]])
+  params.append([[32, 3, 1, 'same', 'relu', 2, 0.05, 256, 0.05, 0.0001],[16, 1, 1, 'same', 'relu', 2, 0.15],[]])
+  params.append([[],[],[]])
+  #-------------------------------------#
 
-  state = env.reset()
+  for p in params:
+      first = p[0]
+      second = p[1]
+      third = p[2]
 
+      memory = Memory(args['memory_size'],img_size)
+      
+      agent = DQN_Agent(img_size, num_classes, memory,first,second,third)
 
-  episode_rewards = [0.0]
-  loss = [0.0]
-  mean_rewards = []
-  # episodes = []
-  eps_timesteps = agent.epsilon_decay * float(args["n_episodes"])
+      state = env.reset()
 
-  for e in range(args["n_episodes"]):
+      episode_rewards = [0.0]
+      loss = [0.0]
+      mean_rewards = []
+      # episodes = []
+      eps_timesteps = agent.epsilon_decay * float(args["n_episodes"])
 
-      fraction = min(1.0, float(e) / eps_timesteps)
-    
-      action = agent.act(state, fraction)
+      for e in range(args["n_episodes"]):
 
-      next_state, reward, done, _ = env.step(action) 
-
-      agent.remember(state,action,reward,next_state,float(done))
-      state = next_state
-
-      episode_rewards[-1] += reward 
-      if done:
-        state = env.reset()
-        episode_rewards.append(0.0)
-
-      if e > args["learning_starts"]:
-        if(e % args["learning_freq"] == 0):
-          #train network
-          agent.train()
+          fraction = min(1.0, float(e) / eps_timesteps)
         
-        if (e % args["update_target_freq"] == 0):
-          #update target network 
-          agent.update_target()
-          
-    
-      if (done and len(episode_rewards) % args["print_freq"] == 0):
-        print(f"steps: {e}")
-        print(f"epsiodes: {len(episode_rewards)}")
-        mean_100ep_reward = round(np.mean(episode_rewards[-101:-1]), 1)
-        print("mean 100 episode reward: {}".format(mean_100ep_reward))
-        mean_rewards.append(mean_100ep_reward)
-        print("------------------------------------")
-  save_reward(fieldnames_results,mean_rewards)
+          action = agent.act(state, fraction)
+
+          next_state, reward, done, _ = env.step(action) 
+
+          agent.remember(state,action,reward,next_state,float(done))
+          state = next_state
+
+          episode_rewards[-1] += reward 
+          if done:
+            state = env.reset()
+            episode_rewards.append(0.0)
+
+          if e > args["learning_starts"]:
+            if(e % args["learning_freq"] == 0):
+              #train network
+              agent.train()
+            
+            if (e % args["update_target_freq"] == 0):
+              #update target network 
+              agent.update_target()
+              
+        
+          if (done and len(episode_rewards) % args["print_freq"] == 0):
+            print(f"steps: {e}")
+            print(f"epsiodes: {len(episode_rewards)}")
+            mean_100ep_reward = round(np.mean(episode_rewards[-101:-1]), 2)
+            print("mean 100 episode reward: {}".format(mean_100ep_reward))
+            mean_rewards.append(mean_100ep_reward)
+            print("------------------------------------")
+      save_reward(fieldnames_results,mean_rewards)
 
 if __name__ == '__main__':
   main()
