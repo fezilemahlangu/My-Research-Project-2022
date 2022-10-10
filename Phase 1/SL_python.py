@@ -48,7 +48,7 @@ def save_results(fieldnames,total_time,call_back_time,test_acc,test_loss):
         }
     ]
 
-    with open('/home-mscluster/fmahlangu/2089676/atari_breakout_data/results', 'a', encoding='UTF8') as f:
+    with open('/home-mscluster/fmahlangu/2089676/atari_breakout_data/results.csv', 'a', encoding='UTF8') as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writerows(rows)
 
@@ -75,7 +75,7 @@ def save_model(fieldnames,first_layer,second_layer,third_layer):
         }
     ]
 
-    with open('/home-mscluster/fmahlangu/2089676/atari_breakout_data/models', 'a', encoding='UTF8') as f:
+    with open('/home-mscluster/fmahlangu/2089676/atari_breakout_data/models.csv', 'a', encoding='UTF8') as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writerows(rows)
 
@@ -280,13 +280,13 @@ def main():
     #-----------------------------------------------------------------#
     #prepare csv for results 
     fieldnames_results = ['total_time', 'call_back_time','test_acc','test_loss'] 
-    with open('/home-mscluster/fmahlangu/2089676/atari_breakout_data/results', 'w', encoding='UTF8', newline='') as f:
+    with open('/home-mscluster/fmahlangu/2089676/atari_breakout_data/results.csv', 'w', encoding='UTF8', newline='') as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames_results)
         writer.writeheader()
 
     #prepare csv for results 
     fieldnames_m = ['first_layer','second_layer','third_layer'] 
-    with open('/home-mscluster/fmahlangu/2089676/atari_breakout_data/models', 'w', encoding='UTF8', newline='') as f:
+    with open('/home-mscluster/fmahlangu/2089676/atari_breakout_data/models.csv', 'w', encoding='UTF8', newline='') as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames_m)
         writer.writeheader()
 
@@ -501,27 +501,27 @@ def main():
     # first_layer = [32,3,1,"same","relu",2,0.05,256,0.05,1e-4]
 
     params = []
-    params.append([[16, 1, 1, 'same', 'relu', 2, 0.05, 32, 0.05, 0.01],[],[]])
-    params.append([[16, 1, 1, 'same', 'relu', 2, 0.05, 64, 0.1, 0.01],[],[]])
-    params.append([[16, 1, 1, 'same', 'relu', 2, 0.05, 128, 0.05, 0.01],[],[]])
-    params.append([[16, 1, 1, 'same', 'relu', 2, 0.05, 128, 0.1, 0.01],[],[]])
-    params.append([[16, 1, 1, 'same', 'relu', 2, 0.05, 128, 0.25, 0.01],[],[]])
-    params.append([[16, 1, 1, 'same', 'relu', 2, 0.05, 256, 0.15, 0.01],[],[]])
-    params.append([[16, 1, 1, 'same', 'relu', 2, 0.1, 256, 0.05, 0.01],[],[]])
-    params.append([[16, 1, 1, 'same', 'relu', 2, 0.15, 256, 0.05, 0.01],[],[]])
-    params.append([[16, 1, 1, 'same', 'relu', 2, 0.25, 256, 0.15, 0.0003],[],[]])
-    params.append([[32, 1, 1, 'same', 'relu', 2, 0.05, 128, 0.05, 0.0001],[],[]])
-    params.append([[32, 1, 1, 'same', 'relu', 2, 0.05, 256, 0.05, 0.0001],[],[]])
-    params.append([[64, 1, 1, 'same', 'relu', 2, 0.05, 64, 0.05, 0.0001],[],[]])
-    params.append([[64, 1, 1, 'same', 'relu', 2, 0.05, 128, 0.05, 0.0001],[],[]])
-    params.append([[128, 1, 1, 'same', 'relu', 2, 0.05, 128, 0.05, 0.0001],[],[]])
-    params.append([[256, 1, 1, 'same', 'relu', 2, 0.05, 128, 0.05, 0.0001],[],[]])
-    params.append([[32, 3, 1, 'same', 'relu', 2, 0.05, 256, 0.05, 0.0001],[16, 1, 1, 'same', 'relu', 2, 0.15],[]])
-    params.append([[32, 3, 1, 'same', 'relu', 2, 0.05, 256, 0.05, 0.0001],[32, 3, 1, 'same', 'relu', 3, 0.25],[]])
-    params.append([[16, 1, 1, 'same', 'relu', 2, 0.05, 128, 0.05, 0.01],[16, 7, 2, 'valid', 'relu', 2, 0.25],[]])
-    params.append([[32, 3, 1, 'same', 'relu', 2, 0.05, 256, 0.05, 0.0001],[64, 3, 1, 'same', 'relu', 3, 0.25],[]])
-    params.append([[32, 3, 2, 'same', 'relu', 2, 0.05, 128, 0.05, 0.01],[128, 3, 2, 'same', 'relu', 3, 0.25],[]])
-    params.append([[32, 3, 2, 'same', 'relu', 2, 0.05, 512, 0.05, 0.0001],[128, 3, 2, 'same', 'relu', 3, 0.25],[]])
+    # params.append([[16, 1, 1, 'same', 'relu', 2, 0.05, 32, 0.05, 0.01],[],[]])
+    # params.append([[16, 1, 1, 'same', 'relu', 2, 0.05, 64, 0.1, 0.01],[],[]])
+    # params.append([[16, 1, 1, 'same', 'relu', 2, 0.05, 128, 0.05, 0.01],[],[]])
+    # params.append([[16, 1, 1, 'same', 'relu', 2, 0.05, 128, 0.1, 0.01],[],[]])
+    # params.append([[16, 1, 1, 'same', 'relu', 2, 0.05, 128, 0.25, 0.01],[],[]])
+    # params.append([[16, 1, 1, 'same', 'relu', 2, 0.05, 256, 0.15, 0.01],[],[]])
+    # params.append([[16, 1, 1, 'same', 'relu', 2, 0.1, 256, 0.05, 0.01],[],[]])
+    # params.append([[16, 1, 1, 'same', 'relu', 2, 0.15, 256, 0.05, 0.01],[],[]])
+    # params.append([[16, 1, 1, 'same', 'relu', 2, 0.25, 256, 0.15, 0.0003],[],[]])
+    # params.append([[32, 1, 1, 'same', 'relu', 2, 0.05, 128, 0.05, 0.0001],[],[]])
+    # params.append([[32, 1, 1, 'same', 'relu', 2, 0.05, 256, 0.05, 0.0001],[],[]])
+    # params.append([[64, 1, 1, 'same', 'relu', 2, 0.05, 64, 0.05, 0.0001],[],[]])
+    # params.append([[64, 1, 1, 'same', 'relu', 2, 0.05, 128, 0.05, 0.0001],[],[]])
+    # params.append([[128, 1, 1, 'same', 'relu', 2, 0.05, 128, 0.05, 0.0001],[],[]])
+    # params.append([[256, 1, 1, 'same', 'relu', 2, 0.05, 128, 0.05, 0.0001],[],[]])
+    # params.append([[32, 3, 1, 'same', 'relu', 2, 0.05, 256, 0.05, 0.0001],[16, 1, 1, 'same', 'relu', 2, 0.15],[]])
+    # params.append([[32, 3, 1, 'same', 'relu', 2, 0.05, 256, 0.05, 0.0001],[32, 3, 1, 'same', 'relu', 3, 0.25],[]])
+    # params.append([[16, 1, 1, 'same', 'relu', 2, 0.05, 128, 0.05, 0.01],[16, 7, 2, 'valid', 'relu', 2, 0.25],[]])
+    # params.append([[32, 3, 1, 'same', 'relu', 2, 0.05, 256, 0.05, 0.0001],[64, 3, 1, 'same', 'relu', 3, 0.25],[]])
+    # params.append([[32, 3, 2, 'same', 'relu', 2, 0.05, 128, 0.05, 0.01],[128, 3, 2, 'same', 'relu', 3, 0.25],[]])
+    # params.append([[32, 3, 2, 'same', 'relu', 2, 0.05, 512, 0.05, 0.0001],[128, 3, 2, 'same', 'relu', 3, 0.25],[]])
     params.append([[16, 1, 2, 'same', 'relu', 2, 0.05, 32, 0.05, 0.01],[32, 3, 1, 'same', 'relu', 3, 0.25],[32, 3, 1, 'same', 'relu', 3, 0.25]])
     params.append([[16, 8, 2, 'same', 'relu', 2, 0.05, 512, 0.05, 0.0001],[32, 3, 2, 'same', 'relu', 3, 0.25],[32, 3, 1, 'same', 'relu', 3, 0.25]])
     params.append([[32, 5, 2, 'same', 'relu', 2, 0.05, 512, 0.05, 0.0001],[64, 3, 2, 'same', 'relu', 3, 0.25],[64, 3, 1, 'same', 'relu', 3, 0.25]])
