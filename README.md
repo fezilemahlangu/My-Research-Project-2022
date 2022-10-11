@@ -44,3 +44,8 @@ SL.sh runs SL_python.py -> sbatch SL.sh
 DeepRL.sh runs DeepRL.py -> sbatch DeepRL.sh
 
 new_script.sh has all the necessary commands to install libraries using anaconda.
+
+## AI data 
+
+Notebook used to generate the data is found in the AI_ folder.
+Google drive link of data https://drive.google.com/drive/folders/12EZlR3KVwsMhojgnc1Rpf8HR-6nY7b2o?usp=sharing
