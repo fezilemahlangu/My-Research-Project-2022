@@ -34,7 +34,7 @@ class Net(nn.Module):
     self.lr = self.first[4]
     self.optimizer = Adam(self.parameters(),lr=self.lr)
 
-    self.loss = nn.function.l1_loss()
+    self.loss = nn.functional.l1_loss()
 
   def forward(self, x):
 

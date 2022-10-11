@@ -9,15 +9,27 @@ from dqn.wrappers import *
 from dqn.memory_replay  import Memory
 from dqn.my_agent import DQN_Agent
 
-def save_reward(fieldnames,rewards):
+def save_reward(fieldnames,rewards, model ):
   rows=[
       {
           'rewards' : rewards
       }
   ]
 
-
   with open('/home-mscluster/fmahlangu/2089676/atari_breakout_data/results_phase2.csv', 'a', encoding='UTF8') as f:
+      writer = csv.DictWriter(f, fieldnames=fieldnames)
+      writer.writerows(rows)
+
+  rows = [
+
+    {
+      'model' : model 
+    }
+  ]
+
+  fieldnames = ['models']
+
+  with open('/home-mscluster/fmahlangu/2089676/atari_breakout_data/models_phase2.csv', 'a', encoding='UTF8') as f:
       writer = csv.DictWriter(f, fieldnames=fieldnames)
       writer.writerows(rows)
 
@@ -30,6 +42,11 @@ def main():
   #prepare csv 
   fieldnames_results = ['rewards'] 
   with open('/home-mscluster/fmahlangu/2089676/atari_breakout_data/results_phase2.csv', 'w', encoding='UTF8', newline='') as f:
+      writer = csv.DictWriter(f, fieldnames=fieldnames_results)
+      writer.writeheader()
+
+  fieldnames_results = ['models'] 
+  with open('/home-mscluster/fmahlangu/2089676/atari_breakout_data/models_phase2.csv', 'w', encoding='UTF8', newline='') as f:
       writer = csv.DictWriter(f, fieldnames=fieldnames_results)
       writer.writeheader()
 
@@ -67,12 +84,14 @@ def main():
   
   #-------------hyperparams-------------#
   params = []
-  params.append([[16, 1, 1, 512, 0.01],[],[]]) #size, kernel,stride , linear_size,learning_rate
-  params.append([[16, 1, 1, 'same', 'relu', 2, 0.05, 64, 0.1, 0.01],[],[]])
-  params.append([[32, 3, 1, 'same', 'relu', 2, 0.05, 256, 0.05, 0.0001],[64, 3, 1, 'same', 'relu', 3, 0.25],[]])
-  params.append([[32, 3, 1, 'same', 'relu', 2, 0.05, 256, 0.05, 0.0001],[32, 3, 1, 'same', 'relu', 3, 0.25],[]])
-  params.append([[32, 3, 1, 'same', 'relu', 2, 0.05, 256, 0.05, 0.0001],[16, 1, 1, 'same', 'relu', 2, 0.15],[]])
+  params.append([[16, 2, 1, 512, 0.01],[],[]]) #size, kernel,stride , linear_size,learning_rate
+  params.append([[16, 8, 2, 64, 0.01],[],[]])
+  params.append([[32, 7, 2,256, 0.0001],[64, 3, 2,],[]])
+  params.append([[32, 5, 2, 256, 0.0001],[32, 3, 3],[]])
+  params.append([[32, 3, 2, 256, 0.0001],[16, 1, 2],[]])
   params.append([[32,8,4,1e-4,512],[64,4,2],[64,3,1]]) #size, kernel,stride 
+  params.append([[16,5,4,1e-4,512],[32,4,2],[64,3,1]]) #size, kernel,stride 
+  params.append([[32,8,4,1e-4,512],[64,4,2],[128,3,1]]) #size, kernel,stride
   #-------------------------------------#
 
   for p in params:
@@ -125,7 +144,7 @@ def main():
             print("mean 100 episode reward: {}".format(mean_100ep_reward))
             mean_rewards.append(mean_100ep_reward)
             print("------------------------------------")
-      save_reward(fieldnames_results,mean_rewards)
+      save_reward(fieldnames_results,mean_rewards, p)
 
 if __name__ == '__main__':
   main()
