@@ -225,9 +225,9 @@ def run_model_config(train_x,train_y,val_x,val_y,test_x,test_y,img_shape,num_cla
         model.add(Dropout(rate=sec_layer[6]))
     
     if(len(third_layer)>1):
-        model.add(Conv2D(filters=sec_layer[0],kernel_size=sec_layer[1],strides=sec_layer[2],padding=sec_layer[3],activation=sec_layer[4]))
-        model.add(MaxPooling2D(pool_size=sec_layer[5]))
-        model.add(Dropout(rate=sec_layer[6]))
+        model.add(Conv2D(filters=third_layer[0],kernel_size=third_layer[1],strides=third_layer[2],padding=third_layer[3],activation=third_layer[4]))
+        model.add(MaxPooling2D(pool_size=third_layer[5]))
+        model.add(Dropout(rate=third_layer[6]))
 
     model.add(Flatten())
     model.add(Dense(units=first_layer[7], activation = 'relu'))
