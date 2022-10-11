@@ -61,26 +61,7 @@ def main():
       "n_episodes" : int(1e6) #number of steps the environment will run 
   }
 
-  env = gym.make(args["env_name"],full_action_space=True)
-  # env.reset()
-  env.seed(42)
-
-  #--------------wrappers---------------#
-  env = NoopResetEnv(env, noop_max=30)
-  env = MaxAndSkipEnv(env, skip=4)
-  env = EpisodicLifeEnv(env)
-  env = FireResetEnv(env)
-  env = WarpFrame(env)
-  env = PyTorchFrame(env)
-  #env = ClipRewardEnv(env)
-  env = FrameStack(env, 4)
-  #-------------------------------------#
-
-  img_size = env.observation_space
-  # print(img_size.shape)
-
-  num_classes = env.action_space.n
-
+  
   
   #-------------hyperparams-------------#
   params = []
@@ -98,6 +79,27 @@ def main():
       first = p[0]
       second = p[1]
       third = p[2]
+
+      env = gym.make(args["env_name"])
+      # env.reset()
+      env.seed(42)
+
+      #--------------wrappers---------------#
+      env = NoopResetEnv(env, noop_max=30)
+      env = MaxAndSkipEnv(env, skip=4)
+      env = EpisodicLifeEnv(env)
+      env = FireResetEnv(env)
+      env = WarpFrame(env)
+      env = PyTorchFrame(env)
+      #env = ClipRewardEnv(env)
+      env = FrameStack(env, 4)
+      #-------------------------------------#
+
+      img_size = env.observation_space
+      # print(img_size.shape)
+
+      num_classes = env.action_space.n
+
 
       memory = Memory(args['memory_size'],img_size)
       
