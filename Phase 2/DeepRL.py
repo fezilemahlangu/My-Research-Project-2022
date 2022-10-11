@@ -67,12 +67,12 @@ def main():
   
   #-------------hyperparams-------------#
   params = []
-  params.append([[16, 1, 1, 'same', 'relu', 2, 0.05, 32, 0.05, 0.01],[],[]])
+  params.append([[16, 1, 1, 512, 0.01],[],[]]) #size, kernel,stride , linear_size,learning_rate
   params.append([[16, 1, 1, 'same', 'relu', 2, 0.05, 64, 0.1, 0.01],[],[]])
   params.append([[32, 3, 1, 'same', 'relu', 2, 0.05, 256, 0.05, 0.0001],[64, 3, 1, 'same', 'relu', 3, 0.25],[]])
   params.append([[32, 3, 1, 'same', 'relu', 2, 0.05, 256, 0.05, 0.0001],[32, 3, 1, 'same', 'relu', 3, 0.25],[]])
   params.append([[32, 3, 1, 'same', 'relu', 2, 0.05, 256, 0.05, 0.0001],[16, 1, 1, 'same', 'relu', 2, 0.15],[]])
-  params.append([[],[],[]])
+  params.append([[32,8,4,1e-4,512],[64,4,2],[64,3,1]]) #size, kernel,stride 
   #-------------------------------------#
 
   for p in params:
