@@ -49,5 +49,5 @@ new_script.sh has all the necessary commands to install libraries using anaconda
 
 Notebook used to generate the data is found in the AI_generated_data folder -> has link to google colab 
 
-Google drive link of data: https://drive.google.com/drive/folders/12EZlR3KVwsMhojgnc1Rpf8HR-6nY7b2o?usp=sharing
+Google drive link to data: https://drive.google.com/drive/folders/12EZlR3KVwsMhojgnc1Rpf8HR-6nY7b2o?usp=sharing
 
