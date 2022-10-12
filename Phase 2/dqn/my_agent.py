@@ -5,7 +5,7 @@ from dqn.network import Net
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 class DQN_Agent:
-    def __init__(self, img_size, num_classes, memory):
+    def __init__(self, img_size, num_classes, memory,first,second,third):
         self.img_size = img_size
         self.num_classes = num_classes
         self.gamma = 0.99 #discount factor 
@@ -16,8 +16,8 @@ class DQN_Agent:
         self.learning_rate = 0.001
 
         self.memory = memory
-        self.model = Net(img_size,num_classes)
-        self.target = Net(img_size,num_classes)
+        self.model = Net(img_size,num_classes,first,second,third)
+        self.target = Net(img_size,num_classes,first,second,third)
 
         self.batch_size = 32
         self.batch_space = [i for i in range(self.batch_size)]

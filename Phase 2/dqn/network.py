@@ -38,7 +38,7 @@ class Net(nn.Module):
     self.lr = self.first[4]
     self.optimizer = Adam(self.parameters(),lr=self.lr)
 
-    self.loss = nn.functional.l1_loss()
+    # self.loss = nn.functional.l1_loss()
 
   def flat_shape(self,input):
     x = torch.zeros(1,*input)
@@ -65,6 +65,6 @@ class Net(nn.Module):
 
   def backward(self,target,val):
     self.optimizer.zero_grad()
-    loss = self.loss(val,target).to(device)
+    loss = nn.functional.l1_loss()(val,target).to(device)
     loss.backward()
     self.optimizer.step()
