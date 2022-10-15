@@ -38,6 +38,12 @@ needs data from Atari HEAD :
   
 }
 
+Games used:
+  
+  Breakout
+  Frostbite
+  Enduro 
+
 ## sh files 
 SL.sh runs SL_python.py -> sbatch SL.sh
 
