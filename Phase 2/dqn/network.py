@@ -65,6 +65,6 @@ class Net(nn.Module):
 
   def backward(self,target,val):
     self.optimizer.zero_grad()
-    loss = nn.functional.l1_loss()(val,target).to(device)
+    loss = nn.functional.l1_loss(val,target).to(device)
     loss.backward()
     self.optimizer.step()

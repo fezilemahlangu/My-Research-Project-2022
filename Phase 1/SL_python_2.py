@@ -19,6 +19,8 @@ from sklearn.model_selection import train_test_split
 
 import time 
 import csv 
+
+from PIL import Image, ImageOps
 '''
 For saving results and models:
 '''
@@ -46,12 +48,12 @@ def save_results(fieldnames,total_time,call_back_time,test_acc,test_loss):
         }
     ]
 
-    with open('/home-mscluster/fmahlangu/2089676/atari_breakout_data/results_breakout_layer1.csv', 'a', encoding='UTF8') as f:
+    with open('/home-mscluster/fmahlangu/2089676/atari_breakout_data/results.csv', 'a', encoding='UTF8') as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writerows(rows)
 
 
-def save_model(fieldnames,first_layer,second_layer):
+def save_model(fieldnames,first_layer,second_layer,third_layer):
     '''
     saves training model hyperparameters to a csv file 
 
@@ -59,6 +61,7 @@ def save_model(fieldnames,first_layer,second_layer):
         fieldnames: field names of the csv file 
         first_layer: hyperparameters of the first layer
         second_layer: hyperparameters of the second layer 
+        third_layer: hyperparameters of the third layer
     @returns: 
         *nothing* 
 
@@ -66,11 +69,13 @@ def save_model(fieldnames,first_layer,second_layer):
     rows=[
         {
             'first_layer' : first_layer,
-            'second_layer' : second_layer
+            'second_layer' : second_layer,
+            'third_layer' : third_layer
+
         }
     ]
 
-    with open('/home-mscluster/fmahlangu/2089676/atari_breakout_data/models_breakout_layer1.csv', 'a', encoding='UTF8') as f:
+    with open('/home-mscluster/fmahlangu/2089676/atari_breakout_data/models.csv', 'a', encoding='UTF8') as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writerows(rows)
 
@@ -148,7 +153,7 @@ def create_train_x(zfile,n,deleted_rows):
         training_X: array of images in the zip file 
     '''
 
-    scale_percent = 52 #the images will be reduced by 52%
+    # scale_percent = 52 #the images will be reduced by 52%
     archive = zipfile.ZipFile(zfile, 'r') #open zip file
     training_X=[] #array that will store images 
 
@@ -163,11 +168,13 @@ def create_train_x(zfile,n,deleted_rows):
             width = 84
             height = 84
             dim = (width, height)
-            image=image.resize(dim,PIL.Image.ANTIALIAS)
+            image = ImageOps.grayscale(image) #grayscale 
+            image = image.resize(dim,PIL.Image.ANTIALIAS)
 
             #-----converting image to array and appending to training_X-----#
-            image=np.array(image) #convert image to array 
-            training_X.append(image/255) #-> normalized 
+            image=np.array(image) #convert image to array
+            image = image[:,:,None] #(84,84,1) 
+            training_X.append(image/255.0) #-> normalized 
 
     return training_X
 
@@ -185,7 +192,7 @@ def create_train_y(df):
     array = df.to_records(index=False)
     return array['action']
 
-def run_model_config(train_x,train_y,val_x,val_y,test_x,test_y,img_shape,num_classes,first_layer, sec_layer,fieldnames_results, fieldnames_model):
+def run_model_config(train_x,train_y,val_x,val_y,test_x,test_y,img_shape,num_classes,first_layer, sec_layer,third_layer,fieldnames_results, fieldnames_model):
     '''
     This function takes in the hyperparameters of the model, builds and runs it.
     It also saves the model hyperparameters and results from training and test scores 
@@ -212,11 +219,15 @@ def run_model_config(train_x,train_y,val_x,val_y,test_x,test_y,img_shape,num_cla
     model.add(Conv2D(filters=first_layer[0],kernel_size=first_layer[1],strides=first_layer[2], padding=first_layer[3],activation=first_layer[4],input_shape=img_shape))
     model.add(MaxPooling2D(pool_size=first_layer[5]))
     model.add(Dropout(rate=first_layer[6]))
-
     if(len(sec_layer)>1):
         model.add(Conv2D(filters=sec_layer[0],kernel_size=sec_layer[1],strides=sec_layer[2],padding=sec_layer[3],activation=sec_layer[4]))
         model.add(MaxPooling2D(pool_size=sec_layer[5]))
         model.add(Dropout(rate=sec_layer[6]))
+    
+    if(len(third_layer)>1):
+        model.add(Conv2D(filters=third_layer[0],kernel_size=third_layer[1],strides=third_layer[2],padding=third_layer[3],activation=third_layer[4]))
+        model.add(MaxPooling2D(pool_size=third_layer[5]))
+        model.add(Dropout(rate=third_layer[6]))
 
     model.add(Flatten())
     model.add(Dense(units=first_layer[7], activation = 'relu'))
@@ -229,16 +240,16 @@ def run_model_config(train_x,train_y,val_x,val_y,test_x,test_y,img_shape,num_cla
     metrics=['accuracy'])
 
     #early stopping 
-    early_stopping = keras.callbacks.EarlyStopping(monitor = 'val_accuracy', min_delta = 0.00001, patience = 5)
+    early_stopping = keras.callbacks.EarlyStopping(monitor = 'val_loss', min_delta = 0.00001, patience = 3)
 
     #run model 
     time_callback = timing_Callback() 
     start = time.time()
-    Atari_Conf_History =  model.fit(train_x, train_y, epochs = 20, validation_data=(val_x, val_y), callbacks=[time_callback,early_stopping])
+    Atari_Conf_History =  model.fit(train_x, train_y, epochs = 25, validation_data=(val_x, val_y), callbacks=[time_callback,early_stopping])
     total_time = time.time()-start 
 
     #save model hyperparameters to csv
-    save_model(fieldnames_model,first_layer,sec_layer)
+    save_model(fieldnames_model,first_layer,sec_layer,third_layer)
 
     #save results to csv
     # history = Atari_Conf_History.history 
@@ -269,13 +280,13 @@ def main():
     #-----------------------------------------------------------------#
     #prepare csv for results 
     fieldnames_results = ['total_time', 'call_back_time','test_acc','test_loss'] 
-    with open('/home-mscluster/fmahlangu/2089676/atari_breakout_data/results_breakout_layer1.csv', 'w', encoding='UTF8', newline='') as f:
+    with open('/home-mscluster/fmahlangu/2089676/atari_breakout_data/results.csv', 'w', encoding='UTF8', newline='') as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames_results)
         writer.writeheader()
 
     #prepare csv for results 
-    fieldnames_m = ['first_layer','second_layer'] 
-    with open('/home-mscluster/fmahlangu/2089676/atari_breakout_data/models_breakout_layer1.csv', 'w', encoding='UTF8', newline='') as f:
+    fieldnames_m = ['first_layer','second_layer','third_layer'] 
+    with open('/home-mscluster/fmahlangu/2089676/atari_breakout_data/models.csv', 'w', encoding='UTF8', newline='') as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames_m)
         writer.writeheader()
 
@@ -320,156 +331,76 @@ def main():
     testY = np.array(testY)
 
 
-    # #-------------------------------------------------------trial = 73 -------------------------------------------------------
-    trial= 73
-    zipname,df= get_data(trial)
-   
-    #get images with associated actions for each trial 
-    n=dataframe[dataframe.trial_id==trial].total_frame.tolist() #get number of frame/images
-    n=n[0]
-
-    df,deleted_rows=clean_df(df)
-    images=create_train_x(zipname,n,deleted_rows)
-    actions=create_train_y(df)
-
-    trainX1, valX1, trainY1, valY1 = train_test_split(images, actions, test_size=0.18)
-    trainX1, testX1, trainY1, testY1 = train_test_split(trainX1, trainY1, test_size=0.12)
-
-    trainX1 = np.array(trainX1)
-    valX1 = np.array(valX1)
-    testX1 = np.array(testX1)
-    trainY1 = np.array(trainY1)
-    valY1 = np.array(valY1)
-    testY1 = np.array(testY1)
+    for i in range(len(trainY)):
+        if trainY[i] == 3:
+          trainY[i] = 2
+        if trainY[i] == 4:
+          trainY[i] = 3
 
 
-    alltrainX = []
-
-    for i in range(trainX.shape[0]):
-      alltrainX.append(trainX[i])
-
-    for i in range(trainX1.shape[0]):
-      alltrainX.append(trainX1[i])
-
-    alltrainX = np.array(alltrainX)
-    print(alltrainX.shape)
-
-    alltrainY = []
-
-    for i in range(trainY.shape[0]):
-      alltrainY.append(trainY[i])
-
-    for i in range(trainY1.shape[0]):
-      alltrainY.append(trainY1[i])
-
-    alltrainY = np.array(alltrainY)
-
-    alltestX = []
-
-    for i in range(testX.shape[0]):
-      alltestX.append(testX[i])
-
-    for i in range(testX1.shape[0]):
-      alltestX.append(testX1[i])
-
-    alltestX = np.array(alltestX)
-
-    alltestY = []
-
-    for i in range(testY.shape[0]):
-      alltestY.append(testY[i])
-
-    for i in range(testY1.shape[0]):
-      alltestY.append(testY1[i])
-
-    alltestY = np.array(alltestY)
-
-    allvalX = []
-
-    for i in range(valX.shape[0]):
-      allvalX.append(valX[i])
-
-    for i in range(valX1.shape[0]):
-      allvalX.append(valX1[i])
-
-    allvalX = np.array(allvalX)
-
-    allvalY = []
-
-    for i in range(valY.shape[0]):
-      allvalY.append(valY[i])
-
-    for i in range(valY1.shape[0]):
-      allvalY.append(valY1[i])
-
-    allvalY = np.array(allvalY)
-
-    #for breakout classes -> so that to_categorical works 
-    for i in range(len(alltrainY)):
-      if alltrainY[i] == 3:
-        alltrainY[i] = 2
-      if alltrainY[i] == 4:
-        alltrainY[i] = 3
-
-
-    for i in range(len(alltestY)):
-      if alltestY[i] == 3:
-        alltestY[i] = 2
-      if alltestY[i] == 4:
-        alltestY[i] = 3
+    for i in range(len(testY)):
+      if testY[i] == 3:
+        testY[i] = 2
+      if testY[i] == 4:
+        testY[i] = 3
     
-    for i in range(len(allvalY)):
-      if allvalY[i] == 3:
-        allvalY[i] = 2
-      if allvalY[i] == 4:
-        allvalY[i] = 3
+    for i in range(len(valY)):
+      if valY[i] == 3:
+        valY[i] = 2
+      if valY[i] == 4:
+        valY[i] = 3
+
 
     #---------converting y values to categorical data (one-hot encoding)---#
     # img_shape = [109, 83, 3]
-    img_shape = [84, 84, 3]
+    img_shape = [84, 84, 1]
     num_classes = 4
 
-    alltrainY = keras.utils.to_categorical(alltrainY, num_classes)
-    allvalY = keras.utils.to_categorical(allvalY, num_classes)
-    alltestY = keras.utils.to_categorical(alltestY, num_classes)
+    trainY = keras.utils.to_categorical(trainY, num_classes)
+    valY = keras.utils.to_categorical(valY, num_classes)
+    testY = keras.utils.to_categorical(testY, num_classes)
+
 
 
     #-------------------------------RUN CONFIGURATIONS-----------------------------#
-    #hyper-paramters:
-    Filters = [32,64,128,256]
-    Kernels = [1,3,5]
-    Strides = [1,2]
-    Padding = ["same"]
-    Activations = ["relu"]
-    Pool = [2]
-    Dropout_rate =[0.05]
-    Last_Dense = [128,256]
-    Learning_rate = [1e-4]
 
-    # Filters = [16]
-    # Kernels = [1]
-    # Strides = [1]
-    # Padding = ["same"]
-    # Activations = ["relu"]
-    # Pool = [2]
-    # Dropout_rate =[0.05]
-    # Last_Dense = [16]
-    # Learning_rate = [1e-2]
+    params = []
+
+    # params.append([[16, 1, 2, 'same', 'relu', 2, 0.05, 128, 0.05, 0.01],[32, 3, 1, 'same', 'relu', 3, 0.25],[32, 3, 1, 'same', 'relu', 3, 0.25]])
+    # params.append([[16, 8, 2, 'same', 'relu', 2, 0.05, 512, 0.05, 0.01],[32, 3, 2, 'same', 'relu', 3, 0.25],[32, 3, 1, 'same', 'relu', 3, 0.25]])
+    # params.append([[32, 5, 2, 'same', 'relu', 2, 0.05, 512, 0.05, 0.00001],[64, 3, 2, 'same', 'relu', 3, 0.25],[64, 3, 1, 'same', 'relu', 3, 0.25]])
+    params.append([[16, 7, 4, 'same', 'relu', 1, 0.05, 512, 0.05, 0.001],[32, 4, 2, 'same', 'relu', 1, 0.25],[64, 3, 1, 'same', 'relu', 1, 0.25]]) #minh
+    params.append([[32, 8, 4, 'same', 'relu', 1, 0.05, 256, 0.05, 0.1],[64, 4, 2, 'same', 'relu', 1, 0.25],[128, 3, 1, 'same', 'relu', 1, 0.25]])
+
+    from tensorflow.python.client import device_lib
+    print(device_lib.list_local_devices())
+
+    # print(keras.__version___)
+
+    for p in params:
+      first = p[0]
+      second = p[1]
+      third = p[2]
+
+      run_model_config(trainX,trainY,valX,valY,testX,testY,img_shape,num_classes,first,second,third,fieldnames_results,fieldnames_m)
+      
+
+
 
 
     #run models 
 
-    for fil in Filters:
-        for ker in Kernels:
-            for stri in Strides:
-                for pad in Padding:
-                    for act in Activations:
-                        for pool in Pool:
-                            for dropoutrate in Dropout_rate:
-                                for dense in Last_Dense:
-                                    for last_dropoutrate in Dropout_rate:
-                                        for learn_rate in Learning_rate:
-                                            run_model_config(alltrainX,alltrainY,allvalX,allvalY,alltestX,alltestY,img_shape,num_classes,[fil,ker,stri,pad,act,pool,dropoutrate,dense,last_dropoutrate,learn_rate],[],fieldnames_results,fieldnames_m)
+    # for fil in Filters:
+    #     for ker in Kernels:
+    #         for stri in Strides:
+    #             for pad in Padding:
+    #                 for act in Activations:
+    #                     for pool in Pool:
+    #                         for dropoutrate in Dropout_rate:
+    #                             # for dense in Last_Dense:
+    #                                 # for last_dropoutrate in Dropout_rate:
+    #                                     # for learn_rate in Learning_rate:
+    #                                         run_model_config(alltrainX,alltrainY,allvalX,allvalY,alltestX,alltestY,img_shape,num_classes,first_layer,[fil,ker,stri,pad,act,pool,dropoutrate],fieldnames_results,fieldnames_m)
 
 
 
