@@ -119,21 +119,9 @@ def clean_df(df):
     #--------cleaning data frame-------#
     deleted_rows= df[df.action.isnull()==True].index.tolist()
 
-    deleted_rows_act = df[df.action > 4].index.tolist()
-
     df=df.dropna(subset = ['action'])
 
-    df= df.drop(deleted_rows_act)
-    
-    all_deleted_rows = []
-    
-    for i in deleted_rows:
-      all_deleted_rows.append(i)
-    for i in deleted_rows_act:
-      all_deleted_rows.append(i)
-
-
-    return df,all_deleted_rows
+    return df,deleted_rows
 
 
 
@@ -305,9 +293,9 @@ def main():
 
     dataframe= metaData_df[metaData_df.GameName=="enduro"]
 
-    #-------------------------------------------------------trial = 58 -------------------------------------------------------
-    trial = 58
-    zipname,df= get_data(trial) #trial =58
+    #-------------------------------------------------------trial = 441 -------------------------------------------------------
+    trial = 441
+    zipname,df= get_data(trial) #trial =441
    
 
     #get images with associated actions for each trial 
@@ -331,8 +319,8 @@ def main():
     testY = np.array(testY)
 
 
-    # #-------------------------------------------------------trial = 73 -------------------------------------------------------
-    trial= 73
+    # #-------------------------------------------------------trial = 103 -------------------------------------------------------
+    trial= 103
     zipname,df= get_data(trial)
    
     #get images with associated actions for each trial 
@@ -353,8 +341,8 @@ def main():
     valY1 = np.array(valY1)
     testY1 = np.array(testY1)
 
-    # #-------------------------------------------------------trial = 134 -------------------------------------------------------
-    trial= 134
+    # #-------------------------------------------------------trial = 113 -------------------------------------------------------
+    trial= 113
     zipname,df= get_data(trial)
    
     #get images with associated actions for each trial 
@@ -454,30 +442,10 @@ def main():
 
     allvalY = np.array(allvalY)
 
-    #for breakout classes -> so that to_categorical works 
-    for i in range(len(alltrainY)):
-      if alltrainY[i] == 3:
-        alltrainY[i] = 2
-      if alltrainY[i] == 4:
-        alltrainY[i] = 3
-
-
-    for i in range(len(alltestY)):
-      if alltestY[i] == 3:
-        alltestY[i] = 2
-      if alltestY[i] == 4:
-        alltestY[i] = 3
-    
-    for i in range(len(allvalY)):
-      if allvalY[i] == 3:
-        allvalY[i] = 2
-      if allvalY[i] == 4:
-        allvalY[i] = 3
-
     #---------converting y values to categorical data (one-hot encoding)---#
     # img_shape = [109, 83, 3]
     img_shape = [84, 84, 1]
-    num_classes = 4
+    num_classes = 18
 
     alltrainY = keras.utils.to_categorical(alltrainY, num_classes)
     allvalY = keras.utils.to_categorical(allvalY, num_classes)
@@ -486,43 +454,32 @@ def main():
 
     #-------------------------------RUN CONFIGURATIONS-----------------------------#
     #hyper-paramters:
-    # Filters = [16,32,64,128,256]
-    # Kernels = [1,3,5,7]
-    # Strides = [1,2]
-    # Padding = ["same","valid"]
-    # Activations = ["relu"]
-    # Pool = [2,3]
-    # Dropout_rate =[0.15,0.25]
-    # Last_Dense = [16,32,64,128,256]
-    # Learning_rate = [1e-2,1e-1,3e-4]
-
-    # first_layer = [32,3,1,"same","relu",2,0.05,256,1e-4]
-
-    # first_layer = [32,3,1,"same","relu",2,0.05,256,0.05,1e-4]
 
     params = []
-    # params.append([[16, 1, 1, 'same', 'relu', 2, 0.05, 32, 0.05, 0.01],[],[]])
-    # params.append([[16, 1, 1, 'same', 'relu', 2, 0.05, 64, 0.1, 0.01],[],[]])
-    # params.append([[16, 1, 1, 'same', 'relu', 2, 0.05, 128, 0.05, 0.01],[],[]])
-    # params.append([[16, 1, 1, 'same', 'relu', 2, 0.05, 128, 0.1, 0.01],[],[]])
-    # params.append([[16, 1, 1, 'same', 'relu', 2, 0.05, 128, 0.25, 0.01],[],[]])
-    # params.append([[16, 1, 1, 'same', 'relu', 2, 0.05, 256, 0.15, 0.01],[],[]])
-    # params.append([[16, 1, 1, 'same', 'relu', 2, 0.1, 256, 0.05, 0.01],[],[]])
-    # params.append([[16, 1, 1, 'same', 'relu', 2, 0.15, 256, 0.05, 0.01],[],[]])
-    # params.append([[16, 1, 1, 'same', 'relu', 2, 0.25, 256, 0.15, 0.0003],[],[]])
-    # params.append([[32, 1, 1, 'same', 'relu', 2, 0.05, 128, 0.05, 0.0001],[],[]])
-    # params.append([[32, 1, 1, 'same', 'relu', 2, 0.05, 256, 0.05, 0.0001],[],[]])
-    # params.append([[64, 1, 1, 'same', 'relu', 2, 0.05, 64, 0.05, 0.0001],[],[]])
-    # params.append([[64, 1, 1, 'same', 'relu', 2, 0.05, 128, 0.05, 0.0001],[],[]])
-    # params.append([[128, 1, 1, 'same', 'relu', 2, 0.05, 128, 0.05, 0.0001],[],[]])
-    # params.append([[256, 1, 1, 'same', 'relu', 2, 0.05, 128, 0.05, 0.0001],[],[]])
-    # params.append([[32, 3, 1, 'same', 'relu', 2, 0.05, 256, 0.05, 0.0001],[16, 1, 1, 'same', 'relu', 2, 0.15],[]])
-    # params.append([[32, 3, 1, 'same', 'relu', 2, 0.05, 256, 0.05, 0.0001],[32, 3, 1, 'same', 'relu', 3, 0.25],[]])
-    # params.append([[16, 1, 1, 'same', 'relu', 2, 0.05, 128, 0.05, 0.01],[16, 7, 2, 'valid', 'relu', 2, 0.25],[]])
-    # params.append([[16, 3, 1, 'same', 'relu', 2, 0.05, 256, 0.05, 1],[32, 3, 1, 'same', 'relu', 3, 0.25],[]])
-    # params.append([[32, 3, 2, 'same', 'relu', 2, 0.05, 128, 0.05, 0.000000000000001],[128, 3, 2, 'same', 'relu', 3, 0.25],[]])
-    # params.append([[32, 3, 2, 'same', 'relu', 2, 0.05, 512, 0.05, 0.0001],[128, 3, 2, 'same', 'relu', 3, 0.25],[]])
-    # params.append([[16, 1, 2, 'same', 'relu', 2, 0.05, 128, 0.05, 0.01],[32, 3, 1, 'same', 'relu', 3, 0.25],[32, 3, 1, 'same', 'relu', 3, 0.25]])
+    params.append([[16, 1, 1, 'same', 'relu', 2, 0.05, 32, 0.05, 0.001],[],[]])
+    params.append([[16, 5, 1, 'same', 'relu', 2, 0.05, 64, 0.1, 0.01],[],[]])
+    params.append([[16, 7, 1, 'same', 'relu', 2, 0.05, 128, 0.05, 0.02],[],[]])
+    params.append([[16, 8, 1, 'same', 'relu', 2, 0.05, 128, 0.1, 0.0001],[],[]])
+    params.append([[16, 3, 1, 'same', 'relu', 2, 0.05, 128, 0.25, 0.00001],[],[]])
+    params.append([[16, 5, 1, 'same', 'relu', 2, 0.05, 256, 0.15, 0.04],[],[]])
+    params.append([[16, 7, 1, 'same', 'relu', 2, 0.1, 256, 0.05, 0.01],[],[]])
+    params.append([[16, 5, 1, 'same', 'relu', 2, 0.15, 256, 0.05, 0.01],[],[]])
+    params.append([[16, 8, 1, 'same', 'relu', 2, 0.25, 256, 0.15, 0.0003],[],[]])
+    params.append([[32, 5, 1, 'same', 'relu', 2, 0.05, 128, 0.05, 0.0005],[],[]])
+    params.append([[32, 3, 1, 'same', 'relu', 2, 0.05, 256, 0.05, 0.001],[],[]])
+    params.append([[64, 8, 1, 'same', 'relu', 2, 0.05, 512, 0.05, 0.0001],[],[]])
+    params.append([[64, 5, 1, 'same', 'relu', 2, 0.05, 128, 0.05, 0.001],[],[]])
+    params.append([[128, 3, 1, 'same', 'relu', 2, 0.05, 128, 0.05, 0.0001],[],[]])
+    params.append([[256, 5, 1, 'same', 'relu', 2, 0.05, 128, 0.05, 0.0001],[],[]])
+    params.append([[32, 3, 1, 'same', 'relu', 2, 0.05, 256, 0.05, 0.0001],[16, 1, 1, 'same', 'relu', 2, 0.15],[]])
+    params.append([[32, 3, 1, 'same', 'relu', 2, 0.05, 256, 0.05, 0.0001],[32, 3, 1, 'same', 'relu', 3, 0.25],[]])
+    params.append([[16, 5, 1, 'same', 'relu', 2, 0.05, 128, 0.05, 0.01],[16, 7, 2, 'valid', 'relu', 2, 0.25],[]])
+    params.append([[16, 7, 1, 'same', 'relu', 2, 0.05, 256, 0.05, 0.003],[32, 3, 1, 'same', 'relu', 3, 0.25],[]])
+    params.append([[32, 3, 2, 'same', 'relu', 2, 0.05, 128, 0.05, 0.000001],[128, 3, 2, 'same', 'relu', 3, 0.25],[]])
+    params.append([[16, 8, 1, 'same', 'relu', 2, 0.05, 256, 0.05, 1],[32, 3, 1, 'same', 'relu', 3, 0.25],[]])
+    params.append([[32, 3, 2, 'same', 'relu', 2, 0.05, 128, 0.05, 0.000000000000001],[128, 3, 2, 'same', 'relu', 3, 0.25],[]])
+    params.append([[32, 3, 2, 'same', 'relu', 2, 0.05, 512, 0.05, 0.0001],[128, 3, 2, 'same', 'relu', 3, 0.25],[]])
+    params.append([[16, 5, 2, 'same', 'relu', 2, 0.05, 128, 0.05, 0.01],[32, 3, 1, 'same', 'relu', 3, 0.25],[32, 3, 1, 'same', 'relu', 3, 0.25]])
     params.append([[16, 8, 2, 'same', 'relu', 2, 0.05, 128, 0.05, 0.01],[32, 3, 2, 'same', 'relu', 3, 0.25],[64, 3, 1, 'same', 'relu', 3, 0.25]])
     params.append([[32, 5, 2, 'same', 'relu', 2, 0.05, 512, 0.05, 0.00001],[64, 3, 2, 'same', 'relu', 3, 0.25],[64, 3, 1, 'same', 'relu', 3, 0.25]])
     params.append([[16, 7, 4, 'same', 'relu', 1, 0.05, 256, 0.05, 0.001],[32, 4, 2, 'same', 'relu', 1, 0.25],[64, 3, 1, 'same', 'relu', 1, 0.25]]) #minh
@@ -543,26 +500,7 @@ def main():
       third = p[2]
 
       run_model_config(alltrainX,alltrainY,allvalX,allvalY,alltestX,alltestY,img_shape,num_classes,first,second,third,fieldnames_results,fieldnames_m)
-      
-
-
-
-
-    #run models 
-
-    # for fil in Filters:
-    #     for ker in Kernels:
-    #         for stri in Strides:
-    #             for pad in Padding:
-    #                 for act in Activations:
-    #                     for pool in Pool:
-    #                         for dropoutrate in Dropout_rate:
-    #                             # for dense in Last_Dense:
-    #                                 # for last_dropoutrate in Dropout_rate:
-    #                                     # for learn_rate in Learning_rate:
-    #                                         run_model_config(alltrainX,alltrainY,allvalX,allvalY,alltestX,alltestY,img_shape,num_classes,first_layer,[fil,ker,stri,pad,act,pool,dropoutrate],fieldnames_results,fieldnames_m)
-
-
+    
 
 
 if __name__ == "__main__":
