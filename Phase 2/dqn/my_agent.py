@@ -1,90 +1,99 @@
 import torch 
+from torch.optim import Adam
+from torch import nn
+from gym import spaces 
 import numpy as np 
-import random 
+# import random 
 from dqn.network import Net
+from dqn.memory_replay import Memory
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 class DQN_Agent:
-    def __init__(self, img_size, num_classes, memory,first,second,third):
-        self.img_size = img_size
-        self.num_classes = num_classes
-        self.gamma = 0.99 #discount factor 
-        #self.memory = deque(maxlen=5000)
-        self.epsilon = 1.0 #exploration rate start
-        self.epsilon_decay = 0.1
-        self.epsilon_min = 0.01 #exploration rate end 
-        self.learning_rate = 0.001
 
-        self.memory = memory
-        self.model = Net(img_size,num_classes,first,second,third)
-        self.target = Net(img_size,num_classes,first,second,third)
-
-        self.batch_size = 32
-        self.batch_space = [i for i in range(self.batch_size)]
-        
-
+    def __init__(
+    self,
+    observation_space: spaces.Box,
+    action_space: spaces.Discrete,
+    replay_buffer: Memory,
+    batch_size,
+    gamma,
+    first,
+    second,
+    third
+    ):
+        self.lr = first[7]
+        self.replay_buffer = replay_buffer
+        self.gamma = gamma
+        self.batch_size = batch_size
+        #agents networks
+        self.target_network = Net(observation_space,action_space,first,second,third).to(device)
+        self.policy_network = Net(observation_space,action_space,first,second,third).to(device)
+        #agents optimiser 
+        self.optimiser = Adam(self.policy_network.parameters(),lr=self.lr)
     
-    # def remember(self, img, action, reward, next_img, done):
-    #     self.memory.save((img,action,reward, next_img, done))
-        # print("remembered.")
 
     def train(self):
-        img,action,reward,next_img,done = self.memory.sample(self.batch_size)
+        states, actions, rewards, next_states, dones = self.replay_buffer.sample(self.batch_size)
+        tensor_states = torch.from_numpy(states/255.0).float().to(device)
+        tensor_next_states = torch.from_numpy(next_states/255.0).float().to(device)
+        tensor_actions = torch.from_numpy(actions).long().to(device)
+        tensor_rewards = torch.from_numpy(rewards).float().to(device)
+        tensor_dones = torch.from_numpy(dones).float().to(device)
 
-        img = img / 255.0
-        next_img = next_img / 255.0
+        # # don't track gradients
+        # with torch.no_grad():
+        #     # calculate target
+        #     estimate = None
+        #     if self.use_double_dqn:
+        #         # get next action from the other network
+        #         _, next_action = self.policy_network(tensor_states).max(1)
+        #         # get next q from target network
+        #         estimate = self.target_network(tensor_next_states).gather(1, next_action.unsqueeze(1)).squeeze()
+        #     else:
+        #         estimate = None
+              
+        #         # get next q from target network
+                
 
-        # img = torch.tensor([img], dtype=torch.float)
-        # img = img.to(device)
+        estimate = self.target_network(tensor_next_states).max(1)
 
-        # next_img = torch.tensor([next_img], dtype=torch.float)
-        # next_img = next_img.to(device)
+        c = self.gamma * estimate[0]
+        target = tensor_rewards + (1 - tensor_dones) * c
 
-        img = torch.from_numpy(img).float().to(device)
-        next_img = torch.from_numpy(next_img).float().to(device)
-        action = torch.from_numpy(action).long().to(device)
-        reward = torch.from_numpy(reward).float().to(device)
-        done = torch.from_numpy(done).float().to(device)
-        
-     
-        action_val = self.model.forward(img)
-        action_val = action_val[self.batch_space, action]
+        # backpropagation
+        new_estimate = self.policy_network(tensor_states).gather(1, tensor_actions.unsqueeze(1)).squeeze()
+        loss = nn.functional.l1_loss(new_estimate, target)
+        self.optimiser.zero_grad()
+        loss.backward()
+        self.optimiser.step()
 
-        action_val_next = self.target.forward(next_img)
-        action_val_next = action_val_next.max(dim=1)[0]
+        # # remove from GPU
+        # del tensor_states
+        # del tensor_next_states
 
-        action_val_target = reward + (1 - done) * self.gamma * action_val_next
-        
-
-        #propagate errors and step 
-        
-        self.model.backward(action_val_target, action_val)
-
+        return loss.item()
 
 
     def update_target(self): #update target network parameters with main parameters 
       
-      self.target.load_state_dict(self.model.state_dict())
+      self.target_network.load_state_dict(self.policy_network.state_dict())
 
-    def remember(self,img,action,reward, next_img,done):
-      self.memory.save(img,action,reward, next_img,done)
+    # def remember(self,img,action,reward, next_img,done):
+    #   self.memory.save(img,action,reward, next_img,done)
 
 
     
-    def act(self, img, fraction):
+    def act(self, state):
         
 
-        eps = self.epsilon + fraction * (self.epsilon_min - self.epsilon)
-
-        if np.random.rand() < eps:
-            return random.randrange(self.num_classes) 
-
-        img = np.array(img) / 255.0 #normalize 
-        # img = torch.tensor([img], dtype=torch.float)
-        # img = img.to(device)
-        
-        img = torch.from_numpy(img).float().unsqueeze(0).to(device) #unsqueeze so it's 4D with batch size dimension
-
-        act_values = self.model.forward(img)
-        # return np.argmax(act_values[0])
-        return torch.argmax(act_values).item()
+        state = np.array(state)/255.0
+        # convert state to tensor object and put on GPU
+        state = torch.from_numpy(state).float().unsqueeze(0).to(device)
+        # making sure gradients aren't saved for the following calculations
+        with torch.no_grad():
+            # get action-state values using the foward pass of the network
+            qs = self.policy_network(state)
+            # get max action
+            _, action = qs.max(1)
+            # return action from tensor object
+            return action.item()

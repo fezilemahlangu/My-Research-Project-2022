@@ -1,29 +1,58 @@
 import numpy as np 
 
 class Memory:
-  def __init__(self, max_size, img_size):
-    memory_shape = [
-            ('img', np.float32, img_size.shape), ('action', np.int64),
-            ('reward', np.float32), ('next_img', np.float32, img_size.shape),
-            ('done', np.float32)
-        ]
-    self.memory = np.zeros(max_size, dtype=memory_shape)
-    self.max_size = max_size
-    self.counter = 0 
+  def __init__(self, size):
+        """
+        Initialise a buffer of a given size for storing transitions
+        :param size: the maximum number of transitions that can be stored
+        """
+        self._storage = []
+        self._maxsize = size
+        self._next_idx = 0
     
+  def __len__(self):
+        return len(self._storage)
 
-  def save(self,img,action,reward, next_img,done):
-    index = self.counter % self.max_size
-    self.memory[index] = (img,action,reward,next_img,done)
-    self.counter += 1
+  def add(self, state, action, reward, next_state, done):
+        """
+        Add a transition to the buffer. Old transitions will be overwritten if the buffer is full.
+        :param state: the agent's initial state
+        :param action: the action taken by the agent
+        :param reward: the reward the agent received
+        :param next_state: the subsequent state
+        :param done: whether the episode terminated
+        """
+        data = (state, action, reward, next_state, done)
+
+        if self._next_idx >= len(self._storage):
+            self._storage.append(data)
+        else:
+            self._storage[self._next_idx] = data
+        self._next_idx = (self._next_idx + 1) % self._maxsize
   
-  def sample(self, batch_size):
-    curr = min(self.counter, self.max_size)
-    indices = np.random.choice(curr,size=batch_size,replace = False) #replace is false so samples are unique 
-    batch_sample = self.memory[indices]
+  def _encode_sample(self, indices):
+        states, actions, rewards, next_states, dones = [], [], [], [], []
+        for i in indices:
+            data = self._storage[i]
+            state, action, reward, next_state, done = data
+            states.append(np.array(state, copy=False))
+            actions.append(action)
+            rewards.append(reward)
+            next_states.append(np.array(next_state, copy=False))
+            dones.append(done)
+        return (
+            np.array(states),
+            np.array(actions),
+            np.array(rewards),
+            np.array(next_states),
+            np.array(dones),
+        )
 
-    return (np.array(batch_sample['img']),
-            np.array(batch_sample['action']),
-            np.array(batch_sample['reward']),
-            np.array(batch_sample['next_img']),
-            np.array(batch_sample['done']))
+  def sample(self, batch_size):
+      """
+      Randomly sample a batch of transitions from the buffer.
+      :param batch_size: the number of transitions to sample
+      :return: a mini-batch of sampled transitions
+      """
+      indices = np.random.randint(0, len(self._storage) - 1, size=batch_size)
+      return self._encode_sample(indices)

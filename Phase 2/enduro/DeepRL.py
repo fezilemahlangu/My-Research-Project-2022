@@ -1,4 +1,4 @@
-from ast import arg
+
 import torch 
 import numpy as np
 import random 
@@ -10,6 +10,7 @@ from dqn.memory_replay  import Memory
 from dqn.my_agent import DQN_Agent
 
 def save_reward(fieldnames,rewards, model ):
+  fieldnames = ['rewards']
   rows=[
       {
           'rewards' : rewards
@@ -52,11 +53,16 @@ def main():
 
   #arguments 
   args = {
-      "env_name" : "Enduro-v4", #name of environment used
+      "env_name" : "EnduroNoFrameskip-v4", #name of environment used #Enduro-v4
       "learning_starts" :10000, 
       "learning_freq" : 5, 
       "update_target_freq" : 1000, 
-      "memory_size" : 50000, 
+      "batch_size" : 32,
+      "gamma" : 0.99,
+      "memory_size" : 5000, 
+      "eps_start" : 1.0,
+      "eps_end" : 0.01,
+      "eps_fraction" : 0.1,
       "print_freq" : 10,
       "n_episodes" : int(1e6) #number of steps the environment will run 
   }
@@ -65,14 +71,15 @@ def main():
   
   #-------------hyperparams-------------#
   params = []
-  params.append([[16, 2, 1, 512, 0.01],[],[]]) #size, kernel,stride , linear_size,learning_rate
-  params.append([[16, 8, 2, 64, 0.01],[],[]])
-  params.append([[32, 7, 2,256, 0.0001],[64, 3, 2,],[]])
-  params.append([[32, 5, 2, 256, 0.0001],[32, 3, 3],[]])
-  params.append([[32, 3, 2, 256, 0.0001],[16, 1, 2],[]])
-  params.append([[32,8,4,1e-4,512],[64,4,2],[64,3,1]]) #size, kernel,stride 
-  params.append([[16,5,4,1e-4,512],[32,4,2],[64,3,1]]) #size, kernel,stride 
-  params.append([[32,8,4,1e-4,512],[64,4,2],[128,3,1]]) #size, kernel,stride
+  params.append([[32, 5, 1, 2, 0.05, 128, 0.05, 0.0005],[],[]]) #size, kernel,stride , linear_size,learning_rate
+  params.append([[16, 7, 1, 2, 0.05, 128, 0.05, 0.02],[],[]])
+  params.append([[32, 3, 1, 2, 0.05, 256, 0.05, 0.001],[],[]])
+  params.append([[32, 3, 1, 2, 0.05, 256, 0.05, 0.0001],[16, 1, 1, 2, 0.15],[]])
+  params.append([[32, 3, 2, 2, 0.05, 128, 0.05, 1e-15],[128, 3, 2, 3, 0.25],[]])
+  
+  params.append([[16, 7, 4, 1, 0.05, 256, 0.05, 0.001],[32, 4, 2, 1, 0.25],[64, 3, 1,1, 0.25]]) #size, kernel,stride 
+  # params.append([[16,5,4,1e-4,512],[32,4,2],[64,3,1]]) #size, kernel,stride 
+  # params.append([[32,8,4,1e-4,512],[64,4,2],[128,3,1]]) #size, kernel,stride
   #-------------------------------------#
 
   for p in params:
@@ -101,9 +108,9 @@ def main():
       num_classes = env.action_space.n
 
 
-      memory = Memory(args['memory_size'],img_size)
+      memory = Memory(args['memory_size'])
       
-      agent = DQN_Agent(img_size, num_classes, memory,first,second,third)
+      agent = DQN_Agent(img_size, num_classes, memory,args["batch_size"], args["gamma"],first,second,third)
 
       state = env.reset()
 
@@ -111,17 +118,24 @@ def main():
       loss = [0.0]
       mean_rewards = []
       # episodes = []
-      eps_timesteps = agent.epsilon_decay * float(args["n_episodes"])
+      eps_timesteps = args["eps_fraction"] * float(args["n_episodes"])
 
       for e in range(args["n_episodes"]):
 
           fraction = min(1.0, float(e) / eps_timesteps)
-        
-          action = agent.act(state, fraction)
+
+          eps_threshold = args["eps_start"] + fraction *(args["eps_end"] - args["eps_start"])
+
+          sample = random.random()
+
+          if sample < eps_threshold:
+            action = random.randrange(env.action_space.n)
+          else:
+            action = agent.act(state)
 
           next_state, reward, done, _ = env.step(action) 
 
-          agent.remember(state,action,reward,next_state,float(done))
+          agent.replay_buffer.add(state,action,reward,next_state,float(done))
           state = next_state
 
           episode_rewards[-1] += reward 

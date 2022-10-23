@@ -2,7 +2,7 @@
 
 #SBATCH -p batch
 #SBATCH -N 1
-#SBATCH -J deepRL_run 
+#SBATCH -J enduro_deepRL
 #SBATCH -o my_output_file2.out
 #SBATCH -e my_error_file2.err
 

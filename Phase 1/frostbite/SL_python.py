@@ -344,6 +344,8 @@ def main():
     # #-------------------------------------------------------trial = 582 -------------------------------------------------------
     trial= 582
     zipname,df= get_data(trial)
+
+    dataframe= metaData_df[metaData_df.GameName=="frostbite_highscore"]
    
     #get images with associated actions for each trial 
     n=dataframe[dataframe.trial_id==trial].total_frame.tolist() #get number of frame/images

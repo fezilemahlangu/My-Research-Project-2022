@@ -9,7 +9,8 @@ from dqn.wrappers import *
 from dqn.memory_replay  import Memory
 from dqn.my_agent import DQN_Agent
 
-def save_reward(fieldnames,rewards, model ):
+def save_reward(rewards, model ):
+  fieldnames = ['rewards']
   rows=[
       {
           'rewards' : rewards
@@ -146,7 +147,7 @@ def main():
             print("mean 100 episode reward: {}".format(mean_100ep_reward))
             mean_rewards.append(mean_100ep_reward)
             print("------------------------------------")
-      save_reward(fieldnames_results,mean_rewards, p)
+      save_reward(mean_rewards, p)
 
 if __name__ == '__main__':
   main()

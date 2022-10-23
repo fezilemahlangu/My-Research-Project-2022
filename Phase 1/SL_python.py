@@ -501,41 +501,13 @@ def main():
     # first_layer = [32,3,1,"same","relu",2,0.05,256,0.05,1e-4]
 
     params = []
-    # params.append([[16, 1, 1, 'same', 'relu', 2, 0.05, 32, 0.05, 0.01],[],[]])
-    # params.append([[16, 1, 1, 'same', 'relu', 2, 0.05, 64, 0.1, 0.01],[],[]])
-    # params.append([[16, 1, 1, 'same', 'relu', 2, 0.05, 128, 0.05, 0.01],[],[]])
-    # params.append([[16, 1, 1, 'same', 'relu', 2, 0.05, 128, 0.1, 0.01],[],[]])
-    # params.append([[16, 1, 1, 'same', 'relu', 2, 0.05, 128, 0.25, 0.01],[],[]])
-    # params.append([[16, 1, 1, 'same', 'relu', 2, 0.05, 256, 0.15, 0.01],[],[]])
-    # params.append([[16, 1, 1, 'same', 'relu', 2, 0.1, 256, 0.05, 0.01],[],[]])
-    # params.append([[16, 1, 1, 'same', 'relu', 2, 0.15, 256, 0.05, 0.01],[],[]])
-    # params.append([[16, 1, 1, 'same', 'relu', 2, 0.25, 256, 0.15, 0.0003],[],[]])
-    # params.append([[32, 1, 1, 'same', 'relu', 2, 0.05, 128, 0.05, 0.0001],[],[]])
-    # params.append([[32, 1, 1, 'same', 'relu', 2, 0.05, 256, 0.05, 0.0001],[],[]])
-    # params.append([[64, 1, 1, 'same', 'relu', 2, 0.05, 64, 0.05, 0.0001],[],[]])
-    # params.append([[64, 1, 1, 'same', 'relu', 2, 0.05, 128, 0.05, 0.0001],[],[]])
-    # params.append([[128, 1, 1, 'same', 'relu', 2, 0.05, 128, 0.05, 0.0001],[],[]])
-    # params.append([[256, 1, 1, 'same', 'relu', 2, 0.05, 128, 0.05, 0.0001],[],[]])
-    # params.append([[32, 3, 1, 'same', 'relu', 2, 0.05, 256, 0.05, 0.0001],[16, 1, 1, 'same', 'relu', 2, 0.15],[]])
-    # params.append([[32, 3, 1, 'same', 'relu', 2, 0.05, 256, 0.05, 0.0001],[32, 3, 1, 'same', 'relu', 3, 0.25],[]])
-    # params.append([[16, 1, 1, 'same', 'relu', 2, 0.05, 128, 0.05, 0.01],[16, 7, 2, 'valid', 'relu', 2, 0.25],[]])
-    # params.append([[16, 3, 1, 'same', 'relu', 2, 0.05, 256, 0.05, 1],[32, 3, 1, 'same', 'relu', 3, 0.25],[]])
-    # params.append([[32, 3, 2, 'same', 'relu', 2, 0.05, 128, 0.05, 0.000000000000001],[128, 3, 2, 'same', 'relu', 3, 0.25],[]])
-    # params.append([[32, 3, 2, 'same', 'relu', 2, 0.05, 512, 0.05, 0.0001],[128, 3, 2, 'same', 'relu', 3, 0.25],[]])
-    # params.append([[16, 1, 2, 'same', 'relu', 2, 0.05, 128, 0.05, 0.01],[32, 3, 1, 'same', 'relu', 3, 0.25],[32, 3, 1, 'same', 'relu', 3, 0.25]])
+
     params.append([[16, 8, 2, 'same', 'relu', 2, 0.05, 128, 0.05, 0.01],[32, 3, 2, 'same', 'relu', 3, 0.25],[64, 3, 1, 'same', 'relu', 3, 0.25]])
     params.append([[32, 5, 2, 'same', 'relu', 2, 0.05, 512, 0.05, 0.00001],[64, 3, 2, 'same', 'relu', 3, 0.25],[64, 3, 1, 'same', 'relu', 3, 0.25]])
     params.append([[16, 7, 4, 'same', 'relu', 1, 0.05, 256, 0.05, 0.001],[32, 4, 2, 'same', 'relu', 1, 0.25],[64, 3, 1, 'same', 'relu', 1, 0.25]]) #minh
     params.append([[32, 8, 4, 'same', 'relu', 1, 0.05, 256, 0.05, 0.1],[64, 4, 2, 'same', 'relu', 1, 0.25],[128, 3, 1, 'same', 'relu', 1, 0.25]])
     params.append([[32, 8, 4, 'same', 'relu', 1, 0.05, 256, 0.05, 0.1],[64, 4, 2, 'same', 'relu', 1, 0.25],[128, 3, 1, 'same', 'relu', 1, 0.25]])
-    # params.append([[],[],[]])
-    # params.append([[],[],[]])
-    # params.append([[],[],[]])
-    # params.append([[],[],[]])
-    # params.append([[],[],[]])
-    # params.append([[],[],[]])
-    # params.append([[],[],[]])
-    # params.append([[],[],[]])
+  
 
     for p in params:
       first = p[0]
