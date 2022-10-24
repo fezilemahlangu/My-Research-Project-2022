@@ -17,7 +17,7 @@ def save_reward(fieldnames,rewards, model ):
       }
   ]
 
-  with open('/home-mscluster/fmahlangu/2089676/atari_enduro_data/results_phase2.csv', 'a', encoding='UTF8') as f:
+  with open('/home-mscluster/fmahlangu/2089676/atari_frostbite_data/results_phase2.csv', 'a', encoding='UTF8') as f:
       writer = csv.DictWriter(f, fieldnames=fieldnames)
       writer.writerows(rows)
 
@@ -30,7 +30,7 @@ def save_reward(fieldnames,rewards, model ):
 
   fieldnames = ['models']
 
-  with open('/home-mscluster/fmahlangu/2089676/atari_enduro_data/models_phase2.csv', 'a', encoding='UTF8') as f:
+  with open('/home-mscluster/fmahlangu/2089676/atari_frostbite_data/models_phase2.csv', 'a', encoding='UTF8') as f:
       writer = csv.DictWriter(f, fieldnames=fieldnames)
       writer.writerows(rows)
 
@@ -42,18 +42,18 @@ def main():
 
   #prepare csv 
   fieldnames_results = ['rewards'] 
-  with open('/home-mscluster/fmahlangu/2089676/atari_enduro_data/results_phase2.csv', 'w', encoding='UTF8', newline='') as f:
+  with open('/home-mscluster/fmahlangu/2089676/atari_frostbite_data/results_phase2.csv', 'w', encoding='UTF8', newline='') as f:
       writer = csv.DictWriter(f, fieldnames=fieldnames_results)
       writer.writeheader()
 
   fieldnames_results = ['models'] 
-  with open('/home-mscluster/fmahlangu/2089676/atari_enduro_data/models_phase2.csv', 'w', encoding='UTF8', newline='') as f:
+  with open('/home-mscluster/fmahlangu/2089676/atari_frostbite_data/models_phase2.csv', 'w', encoding='UTF8', newline='') as f:
       writer = csv.DictWriter(f, fieldnames=fieldnames_results)
       writer.writeheader()
 
   #arguments 
   args = {
-      "env_name" : "EnduroNoFrameskip-v4", #name of environment used #Enduro-v4
+      "env_name" : "FrostbiteNoFrameskip-v4", #name of environment used #Enduro-v4
       "learning_starts" :10000, 
       "learning_freq" : 5, 
       "update_target_freq" : 1000, 
@@ -71,15 +71,16 @@ def main():
   
   #-------------hyperparams-------------#
   params = []
-  params.append([[32, 5, 1, 2, 0.05, 128, 0.05, 0.0005],[],[]]) #size, kernel,stride , linear_size,learning_rate
-  params.append([[16, 7, 1, 2, 0.05, 128, 0.05, 0.02],[],[]])
-  params.append([[32, 3, 1, 2, 0.05, 256, 0.05, 0.001],[],[]])
-  params.append([[32, 3, 1, 2, 0.05, 256, 0.05, 0.0001],[16, 1, 1, 2, 0.15],[]])
-  params.append([[32, 3, 2, 2, 0.05, 128, 0.05, 1e-15],[128, 3, 2, 3, 0.25],[]])
+  params.append([[16, 1, 1, 2, 0.05, 32, 0.05, 0.001],[],[]]) #size, kernel,stride , linear_size,learning_rate
+  params.append([[16, 8, 1, 2, 0.05, 128, 0.1, 0.0001],[],[]])
+  params.append([[16, 3, 1,2, 0.05, 128, 0.25, 1e-05],[],[]])
   
-  params.append([[16, 7, 4, 1, 0.05, 256, 0.05, 0.001],[32, 4, 2, 1, 0.25],[64, 3, 1,1, 0.25]]) #size, kernel,stride 
-  # params.append([[16,5,4,1e-4,512],[32,4,2],[64,3,1]]) #size, kernel,stride 
-  # params.append([[32,8,4,1e-4,512],[64,4,2],[128,3,1]]) #size, kernel,stride
+  params.append([[32, 3, 1,2, 0.05, 256, 0.05, 0.0001],[32, 3, 1,  3, 0.25],[]])
+  params.append([[16, 5, 1, 2, 0.05, 128, 0.05, 0.01],[16, 7, 2, 2, 0.25],[]])
+  
+  params.append([[16, 7, 1,  2, 0.05, 256, 0.05, 0.003],[32, 3, 1, 3, 0.25],[]])
+  params.append([[16, 7, 4,  1, 0.05, 256, 0.05, 0.001],[32, 4, 2, 1, 0.25],[64, 3, 1,  1, 0.25]]) 
+  params.append([[32, 8, 4,  1, 0.05, 256, 0.05, 0.1],[64, 4, 2, 1, 0.25],[128, 3, 1,  1, 0.25]]) 
   #-------------------------------------#
 
   for p in params:
