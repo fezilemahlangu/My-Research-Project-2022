@@ -3,8 +3,8 @@
 #SBATCH -p batch
 #SBATCH -N 1
 #SBATCH -J rrmore_deepRL
-#SBATCH -o my_output_file2.out
-#SBATCH -e my_error_file2.err
+#SBATCH -o my_output_file3.out
+#SBATCH -e my_error_file3.err
 
 
 echo "---------------------------"
