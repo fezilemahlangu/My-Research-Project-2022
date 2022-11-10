@@ -17,7 +17,7 @@ def save_reward(fieldnames,rewards, model ):
       }
   ]
 
-  with open('/home-mscluster/fmahlangu/2089676/atari_frostbite_data/results_phase2.csv', 'a', encoding='UTF8') as f:
+  with open('/home-mscluster/fmahlangu/2089676/atari_frostbite_data/results_phase2_more.csv', 'a', encoding='UTF8') as f:
       writer = csv.DictWriter(f, fieldnames=fieldnames)
       writer.writerows(rows)
 
@@ -30,7 +30,7 @@ def save_reward(fieldnames,rewards, model ):
 
   fieldnames = ['models']
 
-  with open('/home-mscluster/fmahlangu/2089676/atari_frostbite_data/models_phase2.csv', 'a', encoding='UTF8') as f:
+  with open('/home-mscluster/fmahlangu/2089676/atari_frostbite_data/models_phase2_more.csv', 'a', encoding='UTF8') as f:
       writer = csv.DictWriter(f, fieldnames=fieldnames)
       writer.writerows(rows)
 
@@ -42,12 +42,12 @@ def main():
 
   #prepare csv 
   fieldnames_results = ['rewards'] 
-  with open('/home-mscluster/fmahlangu/2089676/atari_frostbite_data/results_phase2.csv', 'w', encoding='UTF8', newline='') as f:
+  with open('/home-mscluster/fmahlangu/2089676/atari_frostbite_data/results_phase2_more.csv', 'w', encoding='UTF8', newline='') as f:
       writer = csv.DictWriter(f, fieldnames=fieldnames_results)
       writer.writeheader()
 
   fieldnames_results = ['models'] 
-  with open('/home-mscluster/fmahlangu/2089676/atari_frostbite_data/models_phase2.csv', 'w', encoding='UTF8', newline='') as f:
+  with open('/home-mscluster/fmahlangu/2089676/atari_frostbite_data/models_phase2_more.csv', 'w', encoding='UTF8', newline='') as f:
       writer = csv.DictWriter(f, fieldnames=fieldnames_results)
       writer.writeheader()
 
@@ -75,27 +75,16 @@ def main():
   #ran models
   2,5,6,18,19,20,28,29-30
   """
-  # params.append([[16, 5, 1, 2, 0.05, 64, 0.1, 0.01],[],[]]) #3
-  # params.append([[16, 5, 1, 2, 0.05, 256, 0.15, 0.04],[],[]]) #7
-  # params.append([[16, 7, 1,  2, 0.1, 256, 0.05, 0.01],[],[]]) #8
-  
-  # params.append([[16, 8, 1, 2, 0.25, 256, 0.15, 0.0003],[],[]]) #10
-  # params.append([[32, 5, 1,  2, 0.05, 128, 0.05, 0.0005],[],[]]) #11
-  
-  # params.append([[32, 3, 1,  2, 0.05, 256, 0.05, 0.0001],[16, 1, 1,  2, 0.15],[]]) #17
-  # params.append([[32, 3, 2,  2, 0.05, 128, 0.05, 1e-06],[128, 3, 2,  3, 0.25],[]]) #21
-  # params.append([[16, 8, 1,  2, 0.05, 256, 0.05, 1],[32, 3, 1, 3, 0.25],[]]) #22
-  #-------------------------------------#
   #last run 
-  params.append([[16, 7, 1, 2, 0.05, 128, 0.05, 0.02],[],[]]) #4
-  params.append([[16, 5, 1, 2, 0.15, 256, 0.05, 0.01],[],[]]) #9
-  params.append([[32, 3, 1, 2, 0.05, 256, 0.05, 0.001],[],[]]) #12
+  params.append([[32, 3, 2, 2, 0.05, 128, 0.05, 1e-15],[128, 3, 2,  3, 0.25],[]]) #23
+  params.append([[32, 3, 2, 2, 0.05, 512, 0.05, 0.0001],[128, 3, 2,  3, 0.25],[]]) #24
+  params.append([[16, 5, 2,  2, 0.05, 128, 0.05, 0.01],[32, 3, 1,  3, 0.25],[32, 3, 1,  3, 0.25]]) #25
   
-  params.append([[64, 8, 1, 2, 0.05, 512, 0.05, 0.0001],[],[]]) #13
-  params.append([[64, 5, 1, 2, 0.05, 128, 0.05, 0.001],[],[]]) #14
+  params.append([[16, 8, 2,  2, 0.05, 128, 0.05, 0.01],[32, 3, 2,  3, 0.25],[64, 3, 1, 3, 0.25]]) #26
+  params.append([[32, 5, 2, 2, 0.05, 512, 0.05, 1e-05],[64, 3, 2,  3, 0.25],[64, 3, 1, 3, 0.25]]) #27
+
+  #-------------------------------------#
   
-  params.append([[128, 3, 1, 2, 0.05, 128, 0.05, 0.0001],[],[]]) #15
-  params.append([[256, 5, 1, 2, 0.05, 128, 0.05, 0.0001],[],[]]) #16
 
   for p in params:
       first = p[0]
