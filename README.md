@@ -59,3 +59,13 @@ Notebook used to generate the data is found in the AI_generated_data folder -> h
 
 Google drive link to data: https://drive.google.com/drive/folders/12EZlR3KVwsMhojgnc1Rpf8HR-6nY7b2o?usp=sharing
 
+# Structure of Repo:
+    .
+    ├── AI                  
+    │   ├── DQN.ipynb         # Code for DQN agent 
+    │   ├── videos            # Folder with best DQN runs videos
+    ├── Phase 1         
+    │   ├── A2C.ipynb         # Code for Actor Critic agent 
+    │   ├── videos            # Folder with best A2C runs videos
+    ├── Report.pdf            # Report 
+    └── README.md
